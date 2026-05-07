@@ -26,32 +26,42 @@ const photos = [
   { src: "/images/photos/community-19.jpg", title: "Loaded Up", filter: "staff", likes: 94 },
   { src: "/images/photos/community-20.jpg", title: "Big Sky Ride", filter: "newest", likes: 88 },
 ];
-export default function PhotosPage() {
-  const [activeFilter, setActiveFilter] = useState<FilterType>("newest");
-  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
 
-  const filteredPhotos = photos.filter((photo) => photo.filter === activeFilter);
+export default function PhotosPage() {
+  const [activeFilter, setActiveFilter] =
+    useState<FilterType>("newest");
+
+  const [selectedPhoto, setSelectedPhoto] =
+    useState<string | null>(null);
+
+  const filteredPhotos = photos.filter(
+    (photo) => photo.filter === activeFilter
+  );
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#10100f] px-4 py-16 text-white">
+    <main className="relative min-h-screen overflow-hidden bg-[#10100f] px-4 py-12 text-white md:px-6 md:py-16">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_10%,rgba(29,109,84,0.35),transparent_32%),radial-gradient(circle_at_85%_8%,rgba(246,195,95,0.20),transparent_32%),radial-gradient(circle_at_50%_95%,rgba(35,126,96,0.25),transparent_40%),linear-gradient(180deg,#111312_0%,#201a13_45%,#0b1110_100%)]" />
 
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:48px_48px] opacity-20" />
+
       <section className="relative z-10 mx-auto max-w-7xl">
-        <div className="mb-12 text-center">
-          <p className="text-sm font-black uppercase tracking-[0.35em] text-[#63d6b8]">
+        {/* HEADER */}
+        <div className="mb-10 text-center md:mb-14">
+          <p className="text-[11px] font-black uppercase tracking-[0.35em] text-[#63d6b8] md:text-sm">
             River Neck Acres
           </p>
 
-          <h1 className="mt-4 text-5xl font-black tracking-tight md:text-7xl">
+          <h1 className="mt-4 text-[38px] font-black leading-none tracking-tight md:text-7xl">
             Community Photos
           </h1>
 
-          <p className="mx-auto mt-5 max-w-2xl text-lg font-semibold text-white/75">
+          <p className="mx-auto mt-5 max-w-2xl text-[16px] font-semibold leading-[1.55] text-white/75 md:text-lg">
             Share your riding adventure with the River Neck community.
           </p>
         </div>
 
-        <div className="mx-auto mb-12 grid max-w-3xl grid-cols-3 gap-3 rounded-2xl border border-white/15 bg-white/10 p-2 backdrop-blur-xl">
+        {/* FILTERS */}
+        <div className="mx-auto mb-10 grid max-w-4xl grid-cols-1 gap-3 rounded-2xl border border-white/15 bg-white/10 p-2 backdrop-blur-xl sm:grid-cols-3 md:mb-12">
           <FilterButton
             active={activeFilter === "newest"}
             onClick={() => setActiveFilter("newest")}
@@ -77,19 +87,24 @@ export default function PhotosPage() {
           </FilterButton>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+        {/* GRID */}
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {filteredPhotos.map((photo, index) => (
             <button
               key={photo.src}
               type="button"
               onClick={() => setSelectedPhoto(photo.src)}
-              className={`group relative cursor-pointer overflow-hidden rounded-3xl border border-white/15 bg-white/5 text-left shadow-[0_30px_80px_rgba(0,0,0,0.35)] transition duration-500 hover:-translate-y-2 hover:border-[#f6c35f]/70 hover:shadow-[0_0_45px_rgba(246,195,95,0.22)] ${
-                index === 0 ? "sm:col-span-2 xl:col-span-2" : ""
+              className={`group relative cursor-pointer overflow-hidden rounded-[24px] border border-white/15 bg-white/5 text-left shadow-[0_25px_70px_rgba(0,0,0,0.35)] transition-all duration-500 active:scale-[0.98] hover:-translate-y-2 hover:border-[#f6c35f]/70 hover:shadow-[0_0_45px_rgba(246,195,95,0.22)] ${
+                index === 0
+                  ? "sm:col-span-2 xl:col-span-2"
+                  : ""
               }`}
             >
               <div
-                className={`relative ${
-                  index === 0 ? "h-[420px]" : "h-[310px]"
+                className={`relative overflow-hidden ${
+                  index === 0
+                    ? "h-[300px] md:h-[420px]"
+                    : "h-[260px] md:h-[310px]"
                 }`}
               >
                 <img
@@ -100,16 +115,20 @@ export default function PhotosPage() {
 
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
 
-                <div className="absolute left-5 top-5 flex items-center gap-2 rounded-full bg-black/55 px-4 py-2 text-sm font-black backdrop-blur-md">
-                  <Camera size={16} className="text-[#63d6b8]" />
+                {/* TOP BADGE */}
+                <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full bg-black/55 px-3 py-2 text-[12px] font-black backdrop-blur-md md:left-5 md:top-5 md:px-4 md:text-sm">
+                  <Camera size={15} className="text-[#63d6b8]" />
                   Community
                 </div>
 
-                <div className="absolute bottom-5 left-5 right-5">
-                  <h3 className="text-2xl font-black">{photo.title}</h3>
+                {/* BOTTOM INFO */}
+                <div className="absolute bottom-4 left-4 right-4 md:bottom-5 md:left-5 md:right-5">
+                  <h3 className="text-[22px] font-black leading-tight md:text-2xl">
+                    {photo.title}
+                  </h3>
 
-                  <div className="mt-3 flex items-center justify-between">
-                    <span className="rounded-full bg-[#1d6d54] px-4 py-2 text-sm font-black text-white">
+                  <div className="mt-3 flex items-center justify-between gap-3">
+                    <span className="rounded-full bg-[#1d6d54] px-3 py-2 text-[11px] font-black text-white md:px-4 md:text-sm">
                       {photo.filter === "newest"
                         ? "Newest"
                         : photo.filter === "liked"
@@ -117,8 +136,8 @@ export default function PhotosPage() {
                         : "Staff Pick"}
                     </span>
 
-                    <span className="flex items-center gap-2 font-black text-[#f6c35f]">
-                      <Heart size={18} />
+                    <span className="flex items-center gap-2 text-[14px] font-black text-[#f6c35f] md:text-base">
+                      <Heart size={17} />
                       {photo.likes}
                     </span>
                   </div>
@@ -129,20 +148,21 @@ export default function PhotosPage() {
         </div>
       </section>
 
+      {/* LIGHTBOX */}
       {selectedPhoto && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/92 p-4 backdrop-blur-md">
           <button
             type="button"
             onClick={() => setSelectedPhoto(null)}
-            className="absolute right-6 top-6 cursor-pointer rounded-full bg-white/10 p-3 text-white transition hover:bg-white/20"
+            className="absolute right-4 top-4 cursor-pointer rounded-full bg-white/10 p-3 text-white transition-all duration-300 active:scale-90 hover:bg-white/20 md:right-6 md:top-6"
           >
-            <X size={28} />
+            <X size={26} />
           </button>
 
           <img
             src={selectedPhoto}
             alt="Selected community photo"
-            className="max-h-[88vh] max-w-[95vw] rounded-3xl object-contain shadow-[0_0_80px_rgba(0,0,0,0.7)]"
+            className="max-h-[88vh] w-auto max-w-[95vw] rounded-[24px] object-contain shadow-[0_0_80px_rgba(0,0,0,0.7)]"
           />
         </div>
       )}
@@ -165,7 +185,7 @@ function FilterButton({
     <button
       type="button"
       onClick={onClick}
-      className={`flex cursor-pointer items-center justify-center gap-2 rounded-xl px-4 py-4 text-sm font-black transition ${
+      className={`flex cursor-pointer items-center justify-center gap-2 rounded-xl px-4 py-4 text-[14px] font-black transition-all duration-300 active:scale-95 md:text-sm ${
         active
           ? "bg-[#1d6d54] text-white shadow-[0_0_25px_rgba(29,109,84,0.55)]"
           : "text-white/75 hover:bg-white/10 hover:text-white"

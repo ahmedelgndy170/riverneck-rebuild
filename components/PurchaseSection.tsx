@@ -210,25 +210,27 @@ export default function PurchasePage() {
   };
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#10100f] px-4 py-14 text-white">
+    <main className="relative min-h-screen overflow-hidden bg-[#10100f] px-4 py-10 text-white md:py-14">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_10%,rgba(29,109,84,0.35),transparent_32%),radial-gradient(circle_at_85%_8%,rgba(246,195,95,0.20),transparent_32%),radial-gradient(circle_at_50%_95%,rgba(35,126,96,0.25),transparent_40%),linear-gradient(180deg,#111312_0%,#201a13_45%,#0b1110_100%)]" />
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:48px_48px] opacity-20" />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[180px] bg-gradient-to-b from-[#1d6d54]/35 to-transparent" />
 
       <section className="relative z-10 mx-auto w-full max-w-[1120px]">
         <div className="mb-8 text-center">
-          <p className="text-sm font-black uppercase tracking-[0.35em] text-[#63d6b8]">
+          <p className="text-[11px] font-black uppercase tracking-[0.32em] text-[#63d6b8] md:text-sm">
             River Neck Acres
           </p>
-          <h1 className="mt-3 text-4xl font-black tracking-tight text-white md:text-5xl">
+
+          <h1 className="mt-3 text-[34px] font-black tracking-tight text-white md:text-5xl">
             Day Pass & More
           </h1>
-          <p className="mt-3 text-lg font-semibold text-white/75">
+
+          <p className="mx-auto mt-3 max-w-[700px] text-[16px] font-semibold leading-[1.55] text-white/75 md:text-lg">
             Purchase your passes, memberships, and event tickets.
           </p>
         </div>
 
-        <div className="mb-6 grid grid-cols-3 rounded-xl border border-white/15 bg-white/25 p-1 shadow-[0_20px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl">
+        <div className="mb-6 grid grid-cols-1 gap-2 rounded-xl border border-white/15 bg-white/10 p-2 shadow-[0_20px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:grid-cols-3">
           <TabButton active={activeTab === "day"} onClick={() => setActiveTab("day")}>
             Day Pass
           </TabButton>
@@ -250,8 +252,11 @@ export default function PurchasePage() {
 
         {activeTab === "day" && (
           <Panel>
-            <h2 className="text-3xl font-black">Day Pass Details</h2>
-            <p className="mt-1 font-bold text-white/90">
+            <h2 className="text-[28px] font-black md:text-3xl">
+              Day Pass Details
+            </h2>
+
+            <p className="mt-2 text-[15px] font-bold leading-[1.55] text-white/90 md:text-base">
               $10 per person/day | $15 per machine/day | Optional night ride +$5/day
             </p>
 
@@ -261,10 +266,10 @@ export default function PurchasePage() {
               <button
                 type="button"
                 onClick={() => setShowCalendar((prev) => !prev)}
-                className="flex w-full cursor-pointer items-center gap-3 rounded-lg border border-white/15 bg-[#242226] px-4 py-4 text-left font-bold text-white transition hover:bg-[#fff0a6] hover:text-black focus:bg-[#fff0a6] focus:text-black"
+                className="flex w-full cursor-pointer items-center gap-3 rounded-lg border border-white/15 bg-[#242226] px-4 py-4 text-left font-bold text-white transition active:scale-[0.98] hover:bg-[#fff0a6] hover:text-black focus:bg-[#fff0a6] focus:text-black"
               >
-                <CalendarDays size={22} />
-                {dateRange || "Select date range"}
+                <CalendarDays size={22} className="shrink-0" />
+                <span>{dateRange || "Select date range"}</span>
               </button>
 
               {showCalendar && (
@@ -276,7 +281,7 @@ export default function PurchasePage() {
                 />
               )}
 
-              <p className="mt-3 font-bold text-red-300">
+              <p className="mt-3 text-[14px] font-bold leading-[1.5] text-red-300 md:text-base">
                 Day passes are not available during Summer Kick Off (May 14-17, 2026).
                 Event tickets must be purchased separately.
               </p>
@@ -319,7 +324,7 @@ export default function PurchasePage() {
                 <select
                   value={tentNights}
                   onChange={(e) => setTentNights(Number(e.target.value))}
-                  className="w-full cursor-pointer rounded-lg border border-white/15 bg-[#242226] px-4 py-3 font-black text-white outline-none transition hover:border-[#f6c35f] focus:border-[#63d6b8]"
+                  className="h-[54px] w-full cursor-pointer rounded-lg border border-white/15 bg-[#242226] px-4 font-black text-white outline-none transition hover:border-[#f6c35f] focus:border-[#63d6b8]"
                 >
                   {Array.from({ length: 11 }).map((_, index) => {
                     const night = index + 1;
@@ -332,7 +337,7 @@ export default function PurchasePage() {
                   })}
                 </select>
 
-                <p className="mt-2 font-bold text-white/80">
+                <p className="mt-2 text-[14px] font-bold text-white/80 md:text-base">
                   $10 per night • Unlimited availability
                 </p>
               </div>
@@ -365,8 +370,11 @@ export default function PurchasePage() {
 
         {activeTab === "membership" && (
           <Panel>
-            <h2 className="text-3xl font-black">Membership Details</h2>
-            <p className="mt-1 font-bold text-white/90">
+            <h2 className="text-[28px] font-black md:text-3xl">
+              Membership Details
+            </h2>
+
+            <p className="mt-2 text-[15px] font-bold leading-[1.55] text-white/90 md:text-base">
               Base package: $500 for 2 people, 1 machine. Includes dry camping.
               Does not include the four major annual events.
             </p>
@@ -405,7 +413,7 @@ export default function PurchasePage() {
 
             <div className="mt-6 rounded-xl bg-white/15 p-5">
               <h3 className="mb-2 font-black">Membership Benefits:</h3>
-              <ul className="list-disc space-y-1 pl-5 font-semibold text-white/90">
+              <ul className="list-disc space-y-1 pl-5 text-[15px] font-semibold leading-[1.55] text-white/90 md:text-base">
                 <li>Unlimited day riding for 1 full year</li>
                 <li>Dry camping included</li>
                 <li>Access to all trails</li>
@@ -420,26 +428,32 @@ export default function PurchasePage() {
 
         {activeTab === "events" && (
           <Panel>
-            <div className="mb-6 flex items-center gap-3">
-              <Ticket size={26} />
+            <div className="mb-6 flex items-start gap-3">
+              <Ticket size={26} className="mt-1 shrink-0" />
+
               <div>
-                <h2 className="text-3xl font-black">Event Tickets</h2>
-                <p className="font-semibold text-white/90">
+                <h2 className="text-[28px] font-black md:text-3xl">
+                  Event Tickets
+                </h2>
+
+                <p className="text-[15px] font-semibold leading-[1.55] text-white/90 md:text-base">
                   Purchase tickets for the next upcoming event.
                 </p>
               </div>
             </div>
 
             <div className="mb-6 rounded-xl border border-[#63d6b8]/20 bg-gradient-to-r from-[#1d6d54]/45 to-[#f6c35f]/12 p-5">
-              <h3 className="text-2xl font-black">{currentEvent.name}</h3>
-              <p className="font-bold">{currentEvent.displayDate}</p>
+              <h3 className="text-[23px] font-black leading-tight md:text-2xl">
+                {currentEvent.name}
+              </h3>
+              <p className="mt-1 font-bold">{currentEvent.displayDate}</p>
             </div>
 
             <div className="space-y-4">
               {eventTickets.map((ticket) => (
                 <div
                   key={ticket.name}
-                  className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-4 rounded-xl border border-white/15 bg-white/5 p-5 transition hover:border-[#63d6b8]/60 hover:bg-white/10"
+                  className="grid grid-cols-1 gap-5 rounded-xl border border-white/15 bg-white/5 p-5 transition hover:border-[#63d6b8]/60 hover:bg-white/10 md:grid-cols-[1fr_auto_auto_auto] md:items-center"
                 >
                   <div>
                     <h3 className="text-xl font-black">{ticket.name}</h3>
@@ -447,7 +461,7 @@ export default function PurchasePage() {
                     <p className="font-semibold text-white/80">{ticket.desc}</p>
                   </div>
 
-                  <div className="text-right">
+                  <div className="text-left md:text-right">
                     <p className="text-2xl font-black text-[#63d6b8]">
                       ${ticket.price.toFixed(2)}
                     </p>
@@ -459,7 +473,7 @@ export default function PurchasePage() {
                     onChange={(e) =>
                       updateTicketQty(ticket.name, Number(e.target.value))
                     }
-                    className="w-[88px] cursor-pointer rounded-lg border border-white/15 bg-[#242226] px-3 py-3 text-center font-black text-white outline-none transition hover:border-[#f6c35f] focus:border-[#63d6b8]"
+                    className="h-[52px] w-full cursor-pointer rounded-lg border border-white/15 bg-[#242226] px-3 text-center font-black text-white outline-none transition hover:border-[#f6c35f] focus:border-[#63d6b8] md:w-[88px]"
                   >
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
                       <option key={num} value={num} className="bg-[#242226]">
@@ -470,7 +484,7 @@ export default function PurchasePage() {
 
                   <button
                     onClick={() => handleTicketAdd(ticket)}
-                    className="cursor-pointer rounded-lg bg-[#1d6d54] px-6 py-3 font-black text-white shadow-[0_0_24px_rgba(29,109,84,0.45)] transition hover:bg-[#f6c35f] hover:text-black"
+                    className="h-[52px] w-full cursor-pointer rounded-lg bg-[#1d6d54] px-6 font-black text-white shadow-[0_0_24px_rgba(29,109,84,0.45)] transition-all duration-300 active:scale-95 hover:bg-[#f6c35f] hover:text-black md:w-auto"
                   >
                     Add
                   </button>
@@ -497,7 +511,7 @@ function TabButton({
     <button
       type="button"
       onClick={onClick}
-      className={`cursor-pointer rounded-lg py-3 text-sm font-black transition ${
+      className={`cursor-pointer rounded-xl px-4 py-4 text-[14px] font-black transition-all duration-300 active:scale-95 md:text-sm ${
         active
           ? "bg-[#3a343a] text-white ring-2 ring-white/25 shadow-[0_0_22px_rgba(255,255,255,0.16)]"
           : "text-white hover:bg-white/10"
@@ -510,7 +524,7 @@ function TabButton({
 
 function Panel({ children }: { children: ReactNode }) {
   return (
-    <div className="rounded-2xl border border-white/20 bg-[#373338]/88 p-8 shadow-[0_30px_100px_rgba(0,0,0,0.45)] backdrop-blur-xl">
+    <div className="rounded-2xl border border-white/20 bg-[#373338]/88 p-5 shadow-[0_30px_100px_rgba(0,0,0,0.45)] backdrop-blur-xl md:p-8">
       {children}
     </div>
   );
@@ -543,10 +557,14 @@ function NumberField({
         min={min}
         value={value}
         onChange={(e) => setValue(Math.max(min, Number(e.target.value)))}
-        className="w-full rounded-lg border border-white/15 bg-[#242226] px-4 py-3 font-black text-white outline-none transition hover:border-[#f6c35f] focus:border-[#63d6b8]"
+        className="h-[54px] w-full rounded-lg border border-white/15 bg-[#242226] px-4 text-[16px] font-black text-white outline-none transition hover:border-[#f6c35f] focus:border-[#63d6b8]"
       />
 
-      {note && <p className="mt-2 font-semibold text-white/90">{note}</p>}
+      {note && (
+        <p className="mt-2 text-[14px] font-semibold leading-[1.45] text-white/90 md:text-base">
+          {note}
+        </p>
+      )}
     </div>
   );
 }
@@ -566,24 +584,24 @@ function CheckRow({
     <button
       type="button"
       onClick={() => setChecked(!checked)}
-      className="mt-6 flex w-full cursor-pointer items-center gap-3 rounded-xl border border-white/15 px-4 py-4 text-left font-black transition hover:border-[#f6c35f] hover:bg-white/10"
+      className="mt-6 flex w-full cursor-pointer items-center gap-3 rounded-xl border border-white/15 px-4 py-4 text-left text-[15px] font-black transition-all duration-300 active:scale-[0.98] hover:border-[#f6c35f] hover:bg-white/10"
     >
       <span
-        className={`h-4 w-4 rounded-full border ${
+        className={`h-4 w-4 shrink-0 rounded-full border ${
           checked ? "border-[#63d6b8] bg-[#63d6b8]" : "border-[#63d6b8]"
         }`}
       />
-      {icon}
-      {label}
+      <span className="shrink-0">{icon}</span>
+      <span>{label}</span>
     </button>
   );
 }
 
 function PriceRow({ label, value }: { label: string; value: number }) {
   return (
-    <div className="mt-3 flex justify-between font-black">
+    <div className="mt-3 flex justify-between gap-4 text-[15px] font-black md:text-base">
       <span>{label}</span>
-      <span>${value.toFixed(2)}</span>
+      <span className="shrink-0">${value.toFixed(2)}</span>
     </div>
   );
 }
@@ -592,7 +610,7 @@ function AddToCartButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="mt-6 w-full cursor-pointer rounded-lg bg-[#1d6d54] py-4 font-black text-white shadow-[0_0_28px_rgba(29,109,84,0.45)] transition hover:bg-[#f6c35f] hover:text-black hover:shadow-[0_0_32px_rgba(246,195,95,0.45)]"
+      className="mt-6 h-[58px] w-full cursor-pointer rounded-xl bg-[#1d6d54] text-[16px] font-black text-white shadow-[0_0_28px_rgba(29,109,84,0.45)] transition-all duration-300 active:scale-95 hover:bg-[#f6c35f] hover:text-black hover:shadow-[0_0_32px_rgba(246,195,95,0.45)]"
     >
       Add to Cart
     </button>
@@ -621,7 +639,7 @@ function DatePicker({ onPick }: { onPick: (date: string) => void }) {
   };
 
   return (
-    <div className="absolute left-0 top-[90px] z-20 w-full max-w-[440px] rounded-xl border border-white/15 bg-[#242226] p-5 shadow-[0_30px_80px_rgba(0,0,0,0.65)]">
+    <div className="absolute left-0 top-[90px] z-20 w-full rounded-xl border border-white/15 bg-[#242226] p-4 shadow-[0_30px_80px_rgba(0,0,0,0.65)] md:max-w-[440px] md:p-5">
       <div className="mb-5 flex items-center justify-between">
         <button
           type="button"

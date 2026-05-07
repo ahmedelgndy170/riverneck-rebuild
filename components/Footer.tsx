@@ -29,37 +29,33 @@ function YoutubeIcon() {
 
 export default function Footer() {
   return (
-    <footer className="mt-0 bg-[linear-gradient(135deg,#4f6f45_0%,#3f6b55_42%,#2f4f3f_100%)] text-white">
-
-      <div className="mx-auto grid max-w-[1280px] grid-cols-1 gap-20 px-8 py-16 md:grid-cols-[1.35fr_1.35fr_1fr_1fr]">
-
+    <footer className="mt-0 overflow-hidden bg-[linear-gradient(135deg,#4f6f45_0%,#3f6b55_42%,#2f4f3f_100%)] text-white">
+      <div className="mx-auto grid max-w-[1280px] grid-cols-1 gap-12 px-5 py-14 md:grid-cols-2 md:gap-14 md:px-8 lg:grid-cols-[1.35fr_1.35fr_1fr_1fr] lg:gap-20 lg:py-16">
         {/* LEFT */}
-        <div className="pl-2">
-          <h3 className="mb-8 text-[24px] font-black uppercase tracking-[-0.03em]">
+        <div>
+          <h3 className="mb-6 text-[26px] font-black uppercase tracking-[-0.03em] md:mb-8">
             RIVER NECK ACRES
           </h3>
 
-          <p className="max-w-[320px] text-[18px] font-semibold leading-[1.9] text-white/90">
-            Your premier destination for off-road
-            <br />
-            adventure. 60+ miles of trails,
-            <br />
-            camping, and unforgettable
-            <br />
+          <p className="max-w-[340px] text-[16px] font-semibold leading-[1.8] text-white/90 md:text-[18px] md:leading-[1.9]">
+            Your premier destination for off-road adventure.
+            60+ miles of trails, camping, and unforgettable
             experiences.
           </p>
         </div>
 
         {/* CONTACT */}
-        <div className="pl-2">
-          <h3 className="mb-8 text-[24px] font-black">
+        <div>
+          <h3 className="mb-6 text-[24px] font-black md:mb-8">
             Contact Info
           </h3>
 
-          <div className="space-y-6 text-[18px] font-semibold leading-[1.8] text-white/90">
-
+          <div className="space-y-5 text-[16px] font-semibold leading-[1.7] text-white/90 md:space-y-6 md:text-[18px] md:leading-[1.8]">
             <div className="flex items-start gap-4">
-              <MapPin size={20} className="mt-1 shrink-0 text-white/85" />
+              <MapPin
+                size={20}
+                className="mt-1 shrink-0 text-white/85"
+              />
 
               <span>
                 4459 River Neck Rd
@@ -70,71 +66,89 @@ export default function Footer() {
 
             <a
               href="tel:8433334607"
-              className="flex cursor-pointer items-center gap-4 transition hover:text-[#f6c35f]"
+              className="flex cursor-pointer items-center gap-4 transition-all duration-300 hover:text-[#f6c35f]"
             >
-              <Phone size={20} className="shrink-0 text-white/85" />
+              <Phone
+                size={20}
+                className="shrink-0 text-white/85"
+              />
 
               <span>(843) 333-4607</span>
             </a>
 
             <a
               href="mailto:riverneckacresatv@gmail.com"
-              className="flex cursor-pointer items-center gap-4 transition hover:text-[#f6c35f]"
+              className="flex min-w-0 cursor-pointer items-center gap-4 transition-all duration-300 hover:text-[#f6c35f]"
             >
-              <Mail size={20} className="shrink-0 text-white/85" />
+              <Mail
+                size={20}
+                className="shrink-0 text-white/85"
+              />
 
-              <span>riverneckacresatv@gmail.com</span>
+              <span className="break-all">
+                riverneckacresatv@gmail.com
+              </span>
             </a>
           </div>
         </div>
 
         {/* QUICK LINKS */}
-        <div className="pl-2">
-          <h3 className="mb-8 text-[24px] font-black">
+        <div>
+          <h3 className="mb-6 text-[24px] font-black md:mb-8">
             Quick Links
           </h3>
 
-          <div className="flex flex-col gap-4 text-[18px] font-semibold text-white/90">
-
+          <div className="flex flex-col gap-4 text-[16px] font-semibold text-white/90 md:text-[18px]">
             <Link
               href="/about"
-              className="transition hover:text-[#f6c35f]"
+              className="transition-all duration-300 hover:text-[#f6c35f]"
             >
               About Us
             </Link>
 
-            <Link href="/#epic-trails" className="transition hover:text-[#f6c35f]">
-  Trails
-</Link>
+            <Link
+              href="/#epic-trails"
+              className="transition-all duration-300 hover:text-[#f6c35f]"
+            >
+              Trails
+            </Link>
 
-            <Link href="/#stay-play" className="transition hover:text-[#f6c35f]">
-  Accommodations
-</Link>
+            <Link
+              href="/#stay-play"
+              className="transition-all duration-300 hover:text-[#f6c35f]"
+            >
+              Accommodations
+            </Link>
 
-      <Link href="/#events" className="transition hover:text-[#f6c35f]">
-  Events
-</Link>
+            <Link
+              href="/#events"
+              className="transition-all duration-300 hover:text-[#f6c35f]"
+            >
+              Events
+            </Link>
 
-<Link href="/#contact" className="transition hover:text-[#f6c35f]">
-  Contact
-</Link>
+            <Link
+              href="/#contact"
+              className="transition-all duration-300 hover:text-[#f6c35f]"
+            >
+              Contact
+            </Link>
           </div>
         </div>
 
         {/* SOCIAL */}
-        <div className="pl-2">
-          <h3 className="mb-8 text-[24px] font-black italic">
+        <div>
+          <h3 className="mb-6 text-[24px] font-black italic md:mb-8">
             Follow Us
           </h3>
 
-          <div className="flex items-center gap-5">
-
+          <div className="flex flex-wrap items-center gap-4 md:gap-5">
             <a
               href="https://www.facebook.com/riverneck.acres"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Facebook"
-              className="flex h-14 w-14 cursor-pointer items-center justify-center rounded-2xl bg-white/10 text-white transition duration-300 hover:bg-white/20 hover:text-[#f6c35f]"
+              className="flex h-14 w-14 cursor-pointer items-center justify-center rounded-2xl bg-white/10 text-white transition-all duration-300 active:scale-90 hover:bg-white/20 hover:text-[#f6c35f]"
             >
               <FacebookIcon />
             </a>
@@ -144,7 +158,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram"
-              className="flex h-14 w-14 cursor-pointer items-center justify-center rounded-2xl bg-white/10 text-white transition duration-300 hover:bg-white/20 hover:text-[#f6c35f]"
+              className="flex h-14 w-14 cursor-pointer items-center justify-center rounded-2xl bg-white/10 text-white transition-all duration-300 active:scale-90 hover:bg-white/20 hover:text-[#f6c35f]"
             >
               <InstagramIcon />
             </a>
@@ -152,22 +166,20 @@ export default function Footer() {
             <a
               href="#"
               aria-label="YouTube"
-              className="flex h-14 w-14 cursor-pointer items-center justify-center rounded-2xl bg-white/10 text-white transition duration-300 hover:bg-white/20 hover:text-[#f6c35f]"
+              className="flex h-14 w-14 cursor-pointer items-center justify-center rounded-2xl bg-white/10 text-white transition-all duration-300 active:scale-90 hover:bg-white/20 hover:text-[#f6c35f]"
             >
               <YoutubeIcon />
             </a>
-
           </div>
         </div>
-
       </div>
 
-      <div className="mx-auto max-w-[1280px] border-t border-white/15 px-10 py-7 text-center">
-        <p className="text-[17px] font-bold tracking-wide text-white/85">
+      {/* BOTTOM */}
+      <div className="mx-auto max-w-[1280px] border-t border-white/15 px-5 py-6 text-center md:px-10 md:py-7">
+        <p className="text-[14px] font-bold tracking-wide text-white/85 md:text-[17px]">
           © 2026 River Neck Acres ATV Park. All rights reserved.
         </p>
       </div>
-
     </footer>
   );
 }

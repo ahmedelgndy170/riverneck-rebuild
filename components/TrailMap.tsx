@@ -29,6 +29,8 @@ export default function TrailMap() {
         center: [34.17, -79.62],
         zoom: 13,
         zoomControl: true,
+        scrollWheelZoom: false,
+        dragging: true,
       });
 
       map = mapInstance;
@@ -68,7 +70,7 @@ export default function TrailMap() {
   }, [mapKey]);
 
   return (
-    <div className="h-[520px] w-full overflow-hidden rounded-3xl border border-white/15">
+    <div className="h-[340px] w-full overflow-hidden rounded-[22px] border border-white/15 shadow-[0_25px_80px_rgba(0,0,0,0.45)] md:h-[520px] md:rounded-3xl">
       <div key={mapKey} ref={mapRef} className="h-full w-full" />
     </div>
   );

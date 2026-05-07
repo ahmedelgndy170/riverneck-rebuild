@@ -41,25 +41,26 @@ export default function StayPlaySection() {
   return (
     <section
       id="stay-play"
-      className="relative scroll-mt-24 overflow-hidden px-[7%] py-28 text-white"
+      className="relative scroll-mt-24 overflow-hidden px-4 py-20 text-white md:px-[7%] md:py-28"
     >
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_10%,rgba(29,109,84,0.32),transparent_32%),radial-gradient(circle_at_85%_5%,rgba(246,195,95,0.18),transparent_30%),linear-gradient(180deg,#10100f_0%,#1a1713_50%,#0b1110_100%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:48px_48px] opacity-20" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_10%,rgba(29,109,84,0.26),transparent_32%),radial-gradient(circle_at_85%_5%,rgba(246,195,95,0.12),transparent_30%),linear-gradient(180deg,#10100f_0%,#1a1713_50%,#0b1110_100%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:48px_48px] opacity-20" />
 
-      <div className="relative z-10 mb-14 text-center">
-        <h2 className="text-[52px] font-black uppercase leading-none tracking-[-1px]">
+      <div className="relative z-10 mb-10 text-center md:mb-14">
+        <h2 className="text-[36px] font-black uppercase leading-none tracking-[-1px] md:text-[52px]">
           STAY & PLAY
         </h2>
 
-        <p className="mx-auto mt-6 max-w-[760px] text-[24px] font-medium leading-[1.35] text-white/75">
+        <p className="mx-auto mt-5 max-w-[760px] text-[18px] font-medium leading-[1.55] text-white/75 md:mt-6 md:text-[24px] md:leading-[1.35]">
           Make it a weekend! Choose from cabins, RV sites, or tent camping to
           extend your adventure.
         </p>
       </div>
 
-      <div className="relative z-10 mx-auto grid max-w-[1420px] grid-cols-1 gap-8 lg:grid-cols-3">
-        <div className="overflow-hidden rounded-[18px] border border-white/15 bg-[#151515]/85 shadow-[0_30px_90px_rgba(0,0,0,0.45)] backdrop-blur-xl transition duration-500 hover:-translate-y-2 hover:border-[#f6c35f]/60">
-          <div className="relative h-[300px] overflow-hidden">
+      <div className="relative z-10 mx-auto grid max-w-[1420px] grid-cols-1 gap-6 md:gap-8 lg:grid-cols-3">
+        {/* CABINS / CLUBHOUSE */}
+        <div className="overflow-hidden rounded-[18px] border border-white/15 bg-[#151515]/85 shadow-[0_24px_70px_rgba(0,0,0,0.42)] backdrop-blur-xl transition duration-500 hover:-translate-y-2 hover:border-[#f6c35f]/60">
+          <div className="relative h-[230px] overflow-hidden md:h-[300px]">
             <img
               src={images[slide]}
               alt="Cozy Cabins"
@@ -73,7 +74,7 @@ export default function StayPlaySection() {
               onClick={() =>
                 setSlide((prev) => (prev === 0 ? images.length - 1 : prev - 1))
               }
-              className="absolute left-4 top-1/2 flex h-9 w-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md transition hover:bg-[#f6c35f] hover:text-black"
+              className="absolute left-4 top-1/2 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-black/55 text-[24px] text-white backdrop-blur-md transition active:scale-90 hover:bg-[#f6c35f] hover:text-black"
             >
               ‹
             </button>
@@ -83,7 +84,7 @@ export default function StayPlaySection() {
               onClick={() =>
                 setSlide((prev) => (prev === images.length - 1 ? 0 : prev + 1))
               }
-              className="absolute right-4 top-1/2 flex h-9 w-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md transition hover:bg-[#f6c35f] hover:text-black"
+              className="absolute right-4 top-1/2 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-black/55 text-[24px] text-white backdrop-blur-md transition active:scale-90 hover:bg-[#f6c35f] hover:text-black"
             >
               ›
             </button>
@@ -104,17 +105,19 @@ export default function StayPlaySection() {
             </div>
           </div>
 
-          <div className="flex min-h-[580px] flex-col p-7">
+          <div className="flex min-h-auto flex-col p-5 md:min-h-[580px] md:p-7">
             <div className="mb-5 flex items-center gap-4">
-              <Home className="text-[#63d6b8]" size={24} />
-              <h3 className="text-[26px] font-black uppercase">COZY CABINS</h3>
+              <Home className="shrink-0 text-[#63d6b8]" size={24} />
+              <h3 className="text-[23px] font-black uppercase md:text-[26px]">
+                COZY CABINS
+              </h3>
             </div>
 
-            <div className="mb-7 flex rounded-[12px] bg-white/10 p-1">
+            <div className="mb-6 flex rounded-[12px] bg-white/10 p-1 md:mb-7">
               <button
                 type="button"
                 onClick={() => changeTab("cabin")}
-                className={`flex-1 cursor-pointer rounded-[10px] py-3 text-[15px] font-bold transition-all duration-300 ${
+                className={`flex-1 cursor-pointer rounded-[10px] py-3 text-[15px] font-bold transition-all duration-300 active:scale-95 ${
                   tab === "cabin"
                     ? "bg-[#1d6d54] text-white shadow-[0_0_18px_rgba(29,109,84,0.55)]"
                     : "text-white/70 hover:bg-white/10 hover:text-white"
@@ -126,7 +129,7 @@ export default function StayPlaySection() {
               <button
                 type="button"
                 onClick={() => changeTab("clubhouse")}
-                className={`flex-1 cursor-pointer rounded-[10px] py-3 text-[15px] font-bold transition-all duration-300 ${
+                className={`flex-1 cursor-pointer rounded-[10px] py-3 text-[15px] font-bold transition-all duration-300 active:scale-95 ${
                   tab === "clubhouse"
                     ? "bg-[#1d6d54] text-white shadow-[0_0_18px_rgba(29,109,84,0.55)]"
                     : "text-white/70 hover:bg-white/10 hover:text-white"
@@ -138,37 +141,37 @@ export default function StayPlaySection() {
 
             {tab === "cabin" ? (
               <>
-                <p className="mb-6 text-[18px] font-medium leading-[1.5] text-white/70">
+                <p className="mb-5 text-[16px] font-medium leading-[1.55] text-white/70 md:mb-6 md:text-[18px]">
                   Comfortable cabin sleeping up to 4 with modern amenities.
                   Perfect for families looking for a home away from home.
                 </p>
 
-                <ul className="mb-6 space-y-3 text-[16px] font-bold text-white/80">
+                <ul className="mb-5 space-y-2 text-[15px] font-bold text-white/80 md:mb-6 md:space-y-3 md:text-[16px]">
                   <li>• Sleeps 4</li>
                   <li>• Full kitchen</li>
                   <li>• Hot shower</li>
                   <li>• Climate control</li>
                 </ul>
 
-                <p className="mb-7 text-[22px] font-black text-[#63d6b8]">
+                <p className="mb-6 text-[21px] font-black text-[#63d6b8] md:mb-7 md:text-[22px]">
                   $140 per night
                 </p>
               </>
             ) : (
               <>
-                <p className="mb-6 text-[18px] font-medium leading-[1.5] text-white/70">
+                <p className="mb-5 text-[16px] font-medium leading-[1.55] text-white/70 md:mb-6 md:text-[18px]">
                   Spacious clubhouse option for gatherings, groups, and special
                   weekends at River Neck.
                 </p>
 
-                <ul className="mb-6 space-y-3 text-[16px] font-bold text-white/80">
+                <ul className="mb-5 space-y-2 text-[15px] font-bold text-white/80 md:mb-6 md:space-y-3 md:text-[16px]">
                   <li>• Great for groups</li>
                   <li>• Indoor space</li>
                   <li>• Close to amenities</li>
                   <li>• Perfect for events</li>
                 </ul>
 
-                <p className="mb-7 text-[22px] font-black text-[#63d6b8]">
+                <p className="mb-6 text-[21px] font-black text-[#63d6b8] md:mb-7 md:text-[22px]">
                   Book for availability
                 </p>
               </>
@@ -177,15 +180,16 @@ export default function StayPlaySection() {
             <button
               type="button"
               onClick={goToSignIn}
-              className="mt-auto h-[58px] w-full cursor-pointer rounded-[10px] bg-[#1d6d54] text-[16px] font-black text-white shadow-[0_0_24px_rgba(29,109,84,0.45)] transition hover:bg-[#f6c35f] hover:text-black"
+              className="mt-auto h-[56px] w-full cursor-pointer rounded-[10px] bg-[#1d6d54] text-[16px] font-black text-white shadow-[0_0_24px_rgba(29,109,84,0.45)] transition active:scale-95 hover:bg-[#f6c35f] hover:text-black"
             >
               Sign In to Book
             </button>
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-[18px] border border-white/15 bg-[#151515]/85 shadow-[0_30px_90px_rgba(0,0,0,0.45)] backdrop-blur-xl transition duration-500 hover:-translate-y-2 hover:border-[#f6c35f]/60">
-          <div className="h-[300px] overflow-hidden">
+        {/* RV */}
+        <div className="overflow-hidden rounded-[18px] border border-white/15 bg-[#151515]/85 shadow-[0_24px_70px_rgba(0,0,0,0.42)] backdrop-blur-xl transition duration-500 hover:-translate-y-2 hover:border-[#f6c35f]/60">
+          <div className="h-[230px] overflow-hidden md:h-[300px]">
             <img
               src="/images/stay/rv-hookups.jpg"
               alt="RV Hookups"
@@ -193,39 +197,42 @@ export default function StayPlaySection() {
             />
           </div>
 
-          <div className="flex min-h-[580px] flex-col p-7">
+          <div className="flex min-h-auto flex-col p-5 md:min-h-[580px] md:p-7">
             <div className="mb-5 flex items-center gap-4">
-              <Caravan className="text-[#63d6b8]" size={25} />
-              <h3 className="text-[26px] font-black uppercase">RV HOOKUPS</h3>
+              <Caravan className="shrink-0 text-[#63d6b8]" size={25} />
+              <h3 className="text-[23px] font-black uppercase md:text-[26px]">
+                RV HOOKUPS
+              </h3>
             </div>
 
-            <p className="mb-6 text-[18px] font-medium leading-[1.5] text-white/70">
+            <p className="mb-5 text-[16px] font-medium leading-[1.55] text-white/70 md:mb-6 md:text-[18px]">
               Full-service RV sites with electric, water, and electric hookups
               in a scenic wooded setting.
             </p>
 
-            <ul className="mb-6 space-y-3 text-[16px] font-bold text-white/80">
+            <ul className="mb-5 space-y-2 text-[15px] font-bold text-white/80 md:mb-6 md:space-y-3 md:text-[16px]">
               <li>• 30/50 amp service</li>
               <li>• Water & electric</li>
               <li>• Level sites</li>
             </ul>
 
-            <p className="mb-6 text-[22px] font-black text-[#63d6b8]">
+            <p className="mb-6 text-[21px] font-black text-[#63d6b8] md:text-[22px]">
               $45 per night
             </p>
 
             <button
               type="button"
               onClick={goToSignIn}
-              className="mt-auto h-[58px] w-full cursor-pointer rounded-[10px] bg-[#1d6d54] text-[16px] font-black text-white shadow-[0_0_24px_rgba(29,109,84,0.45)] transition hover:bg-[#f6c35f] hover:text-black"
+              className="mt-auto h-[56px] w-full cursor-pointer rounded-[10px] bg-[#1d6d54] text-[16px] font-black text-white shadow-[0_0_24px_rgba(29,109,84,0.45)] transition active:scale-95 hover:bg-[#f6c35f] hover:text-black"
             >
               Sign In to Book
             </button>
           </div>
         </div>
 
-        <div className="flex h-full flex-col overflow-hidden rounded-[18px] border border-white/15 bg-[#151515]/85 shadow-[0_30px_90px_rgba(0,0,0,0.45)] backdrop-blur-xl transition duration-500 hover:-translate-y-2 hover:border-[#f6c35f]/60">
-          <div className="h-[300px] overflow-hidden">
+        {/* TENT */}
+        <div className="flex h-full flex-col overflow-hidden rounded-[18px] border border-white/15 bg-[#151515]/85 shadow-[0_24px_70px_rgba(0,0,0,0.42)] backdrop-blur-xl transition duration-500 hover:-translate-y-2 hover:border-[#f6c35f]/60">
+          <div className="h-[230px] overflow-hidden md:h-[300px]">
             <img
               src="/images/stay/tent-camping.jpg"
               alt="Tent Camping"
@@ -233,34 +240,34 @@ export default function StayPlaySection() {
             />
           </div>
 
-          <div className="flex min-h-[580px] flex-col p-7">
+          <div className="flex min-h-auto flex-col p-5 md:min-h-[580px] md:p-7">
             <div className="mb-5 flex items-center gap-4">
-              <Tent className="text-[#63d6b8]" size={25} />
-              <h3 className="text-[26px] font-black uppercase">
+              <Tent className="shrink-0 text-[#63d6b8]" size={25} />
+              <h3 className="text-[23px] font-black uppercase md:text-[26px]">
                 TENT CAMPING
               </h3>
             </div>
 
-            <p className="mb-6 text-[18px] font-medium italic leading-[1.5] text-white/70">
+            <p className="mb-5 text-[16px] font-medium italic leading-[1.55] text-white/70 md:mb-6 md:text-[18px]">
               Traditional camping experience with designated tent sites close to
               trails and facilities.
             </p>
 
-            <ul className="mb-6 space-y-3 text-[16px] font-bold text-white/80">
+            <ul className="mb-5 space-y-2 text-[15px] font-bold text-white/80 md:mb-6 md:space-y-3 md:text-[16px]">
               <li>• Fire pits</li>
               <li>• Picnic tables</li>
               <li>• Restroom access</li>
               <li>• Trail access</li>
             </ul>
 
-            <p className="text-[22px] font-black text-[#63d6b8]">
+            <p className="mb-6 text-[21px] font-black text-[#63d6b8] md:text-[22px]">
               $11 per night
             </p>
 
             <button
               type="button"
               onClick={goToSignIn}
-              className="mt-auto h-[58px] w-full cursor-pointer rounded-[10px] bg-[#1d6d54] text-[16px] font-black text-white shadow-[0_0_24px_rgba(29,109,84,0.45)] transition hover:bg-[#f6c35f] hover:text-black"
+              className="mt-auto h-[56px] w-full cursor-pointer rounded-[10px] bg-[#1d6d54] text-[16px] font-black text-white shadow-[0_0_24px_rgba(29,109,84,0.45)] transition active:scale-95 hover:bg-[#f6c35f] hover:text-black"
             >
               Sign In to Book
             </button>
@@ -268,11 +275,11 @@ export default function StayPlaySection() {
         </div>
       </div>
 
-      <div className="relative z-10 mt-10 flex justify-center">
+      <div className="relative z-10 mt-8 flex justify-center md:mt-10">
         <button
           type="button"
           onClick={goToSignIn}
-          className="h-[60px] cursor-pointer rounded-[12px] bg-[#f6c35f] px-10 text-[18px] font-black text-black shadow-[0_0_32px_rgba(246,195,95,0.35)] transition duration-300 hover:bg-[#1d6d54] hover:text-white hover:shadow-[0_0_32px_rgba(29,109,84,0.45)]"
+          className="h-[58px] w-full max-w-[320px] cursor-pointer rounded-[12px] bg-[#f6c35f] px-8 text-[17px] font-black text-black shadow-[0_0_32px_rgba(246,195,95,0.35)] transition duration-300 active:scale-95 hover:bg-[#1d6d54] hover:text-white hover:shadow-[0_0_32px_rgba(29,109,84,0.45)] md:h-[60px] md:w-auto md:max-w-none md:px-10 md:text-[18px]"
         >
           Sign Up to Book
         </button>

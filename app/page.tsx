@@ -255,132 +255,128 @@ export default function Home() {
         </button>
       </div>
 
-      {/* HERO */}
-      <section className="relative flex min-h-screen items-center justify-center overflow-hidden pt-[74px] text-center md:pt-[86px]">
-        <img
-          src="/hero.jpg"
-          alt="ATV rider"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
+    {/* HERO */}
+<section className="relative flex min-h-screen items-center justify-center overflow-hidden pt-[74px] text-center md:pt-[86px]">
+  <img
+    src="/hero.jpg"
+    alt="ATV rider"
+    className="absolute inset-0 h-full w-full object-cover"
+  />
 
-        <div className="absolute inset-0 bg-black/45" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/20 to-black/65" />
+  <div className="absolute inset-0 bg-black/45 md:bg-black/45" />
+  <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/10 to-black/70" />
 
-        <div className="relative z-10 mx-auto w-full max-w-[1180px] px-4 py-10">
-          <h1 className="font-black uppercase leading-[0.95] tracking-[-2px] text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.65)]">
-            <span className="block text-[14vw] leading-[0.92] sm:text-[48px] md:text-[64px]">
-              60+ MILES OF OFF-ROAD FREEDOM AT
-            </span>
+  <div className="relative z-10 mx-auto w-full max-w-[1180px] px-5 py-8 md:px-4 md:py-10">
+    <h1 className="font-black uppercase tracking-[-1px] text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.75)]">
+      <span className="block text-[42px] leading-[0.95] sm:text-[48px] md:text-[64px]">
+        60+ MILES OF OFF-ROAD FREEDOM AT
+      </span>
 
-            <span className="mt-2 block text-[13vw] leading-[0.92] text-[#f2a24a] drop-shadow-[0_3px_0_rgba(80,35,10,0.45)] sm:text-[48px] md:text-[64px]">
-              RIVER NECK ACRES
-            </span>
-          </h1>
+      <span className="mt-3 block text-[38px] leading-[0.95] text-[#f2a24a] drop-shadow-[0_3px_0_rgba(80,35,10,0.45)] sm:text-[48px] md:text-[64px]">
+        RIVER NECK ACRES
+      </span>
+    </h1>
 
-          <p className="mt-6 text-[9vw] font-black leading-[1.05] tracking-[-1px] text-white sm:text-[34px] md:text-[36px]">
-            💗 Ride. Camp. Fall in Love. 💗
-          </p>
+    <p className="mx-auto mt-7 max-w-[650px] text-[31px] font-black leading-[1.15] tracking-[-1px] text-white md:text-[36px]">
+      💗 Ride. Camp. Fall in Love. 💗
+    </p>
 
-          <p className="mx-auto mt-4 max-w-[760px] px-2 text-[5vw] font-extrabold leading-[1.45] text-white sm:text-[21px] md:text-[23px]">
-            The ultimate outdoor playground for couples & friends!
-          </p>
+    <p className="mx-auto mt-5 max-w-[650px] text-[20px] font-extrabold leading-[1.45] text-white md:text-[23px]">
+      The ultimate outdoor playground for couples & friends!
+    </p>
 
-          <div className="mt-6 flex items-center justify-center">
-            <div className="flex max-w-full items-center gap-3 rounded-full bg-black/70 px-4 py-2 text-[13px] text-white backdrop-blur-md sm:px-5 sm:text-[14px]">
-              <div
-                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
-                  parkStatus.label === "OPEN"
-                    ? "bg-green-500/20 text-green-400 shadow-[0_0_16px_rgba(34,197,94,0.45)]"
-                    : "bg-red-500/20 text-red-400 shadow-[0_0_16px_rgba(239,68,68,0.45)]"
-                }`}
-              >
-                <Clock size={17} strokeWidth={2.4} />
-              </div>
-
-              <span
-                className={`rounded-full px-3 py-1 text-[12px] font-black ${
-                  parkStatus.label === "OPEN"
-                    ? "bg-green-500 text-black"
-                    : "bg-red-500 text-white"
-                }`}
-              >
-                {parkStatus.label}
-              </span>
-
-              <span className="font-bold text-white/85">{parkStatus.text}</span>
-            </div>
-          </div>
-
-          <div className="mx-auto mt-10 grid w-full max-w-[1120px] grid-cols-1 gap-4 px-2 md:flex md:flex-wrap md:items-center md:justify-center lg:flex-nowrap">
-            <Link
-              href="/sign-waiver"
-              className="group flex h-[78px] w-full animate-pulse items-center justify-center gap-3 rounded-2xl bg-[#d72f45] px-6 text-white shadow-[0_0_32px_rgba(215,47,69,0.55)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#ee3b55] hover:shadow-[0_0_42px_rgba(238,59,85,0.8)] md:w-auto md:min-w-[250px]"
-            >
-              <PenLine size={24} className="shrink-0" />
-
-              <span className="whitespace-nowrap text-[19px] font-black tracking-[-0.02em]">
-                Sign Waiver to Ride
-              </span>
-            </Link>
-
-            <button
-              type="button"
-              onClick={() => {
-                document
-                  .getElementById("epic-trails")
-                  ?.scrollIntoView({ behavior: "smooth", block: "start" });
-              }}
-              className="group flex h-[78px] w-full cursor-pointer items-center justify-center gap-3 rounded-2xl bg-white px-6 text-[#5d8f86] shadow-[0_18px_35px_rgba(255,255,255,0.18)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_34px_rgba(255,255,255,0.55)] md:w-auto md:min-w-[250px]"
-            >
-              <span className="whitespace-nowrap text-[19px] font-black tracking-[-0.02em]">
-                Explore Trails
-              </span>
-
-              <span className="text-2xl transition-transform duration-300 group-hover:translate-x-2">
-                →
-              </span>
-            </button>
-
-            <Link
-              href="/purchase"
-              className="group flex h-[78px] w-full items-center justify-center gap-3 rounded-2xl bg-[#f6c35f] px-6 text-[#241507] shadow-[0_18px_35px_rgba(246,195,95,0.28)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#ffd37a] hover:shadow-[0_0_34px_rgba(246,195,95,0.65)] md:w-auto md:min-w-[250px]"
-            >
-              <span className="whitespace-nowrap text-[19px] font-black tracking-[-0.02em]">
-                Plan Your Ride
-              </span>
-
-              <span className="text-2xl transition-transform duration-300 group-hover:translate-x-2">
-                →
-              </span>
-            </Link>
-
-            <button
-              type="button"
-              onClick={() => {
-                document
-                  .getElementById("stay-play")
-                  ?.scrollIntoView({ behavior: "smooth", block: "start" });
-              }}
-              className="group flex h-[78px] w-full cursor-pointer items-center justify-center gap-3 rounded-2xl border border-white/40 bg-black/20 px-6 text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-white/80 hover:bg-white/10 hover:shadow-[0_0_34px_rgba(255,255,255,0.35)] md:w-auto md:min-w-[250px]"
-            >
-              <span className="whitespace-nowrap text-[19px] font-black tracking-[-0.02em]">
-                Plan Your Weekend
-              </span>
-
-              <span className="text-2xl transition-transform duration-300 group-hover:translate-x-2">
-                →
-              </span>
-            </button>
-          </div>
+    <div className="mt-6 flex items-center justify-center">
+      <div className="flex items-center gap-3 rounded-full bg-black/75 px-4 py-2 text-[13px] text-white backdrop-blur-md md:px-5 md:text-[14px]">
+        <div
+          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
+            parkStatus.label === "OPEN"
+              ? "bg-green-500/20 text-green-400 shadow-[0_0_16px_rgba(34,197,94,0.45)]"
+              : "bg-red-500/20 text-red-400 shadow-[0_0_16px_rgba(239,68,68,0.45)]"
+          }`}
+        >
+          <Clock size={17} strokeWidth={2.4} />
         </div>
 
-        <a
-          href="#summer"
-          className="absolute bottom-7 left-1/2 z-10 hidden -translate-x-1/2 animate-bounce text-white md:block"
+        <span
+          className={`rounded-full px-3 py-1 text-[12px] font-black ${
+            parkStatus.label === "OPEN"
+              ? "bg-green-500 text-black"
+              : "bg-red-500 text-white"
+          }`}
         >
-          <Mouse size={36} strokeWidth={1.8} />
-        </a>
-      </section>
+          {parkStatus.label}
+        </span>
+
+        <span className="font-bold text-white/85">{parkStatus.text}</span>
+      </div>
+    </div>
+
+    <div className="mx-auto mt-10 grid w-full max-w-[1120px] grid-cols-1 gap-4 px-1 md:flex md:flex-wrap md:items-center md:justify-center lg:flex-nowrap">
+      <Link
+        href="/sign-waiver"
+        className="group flex h-[74px] w-full animate-pulse items-center justify-center gap-3 rounded-2xl bg-[#d72f45] px-6 text-white shadow-[0_0_32px_rgba(215,47,69,0.55)] transition-all duration-300 active:scale-95 hover:-translate-y-1 hover:bg-[#ee3b55] hover:shadow-[0_0_42px_rgba(238,59,85,0.8)] md:w-auto md:min-w-[250px]"
+      >
+        <PenLine size={24} className="shrink-0" />
+        <span className="whitespace-nowrap text-[18px] font-black tracking-[-0.02em]">
+          Sign Waiver to Ride
+        </span>
+      </Link>
+
+      <button
+        type="button"
+        onClick={() => {
+          document
+            .getElementById("epic-trails")
+            ?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }}
+        className="group flex h-[74px] w-full cursor-pointer items-center justify-center gap-3 rounded-2xl bg-white px-6 text-[#5d8f86] shadow-[0_18px_35px_rgba(255,255,255,0.18)] transition-all duration-300 active:scale-95 hover:-translate-y-1 hover:shadow-[0_0_34px_rgba(255,255,255,0.55)] md:w-auto md:min-w-[250px]"
+      >
+        <span className="whitespace-nowrap text-[18px] font-black tracking-[-0.02em]">
+          Explore Trails
+        </span>
+        <span className="text-2xl transition-transform duration-300 group-hover:translate-x-2">
+          →
+        </span>
+      </button>
+
+      <Link
+        href="/purchase"
+        className="group flex h-[74px] w-full items-center justify-center gap-3 rounded-2xl bg-[#f6c35f] px-6 text-[#241507] shadow-[0_18px_35px_rgba(246,195,95,0.28)] transition-all duration-300 active:scale-95 hover:-translate-y-1 hover:bg-[#ffd37a] hover:shadow-[0_0_34px_rgba(246,195,95,0.65)] md:w-auto md:min-w-[250px]"
+      >
+        <span className="whitespace-nowrap text-[18px] font-black tracking-[-0.02em]">
+          Plan Your Ride
+        </span>
+        <span className="text-2xl transition-transform duration-300 group-hover:translate-x-2">
+          →
+        </span>
+      </Link>
+
+      <button
+        type="button"
+        onClick={() => {
+          document
+            .getElementById("stay-play")
+            ?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }}
+        className="group flex h-[74px] w-full cursor-pointer items-center justify-center gap-3 rounded-2xl border border-white/40 bg-black/25 px-6 text-white backdrop-blur-sm transition-all duration-300 active:scale-95 hover:-translate-y-1 hover:border-white/80 hover:bg-white/10 hover:shadow-[0_0_34px_rgba(255,255,255,0.35)] md:w-auto md:min-w-[250px]"
+      >
+        <span className="whitespace-nowrap text-[18px] font-black tracking-[-0.02em]">
+          Plan Your Weekend
+        </span>
+        <span className="text-2xl transition-transform duration-300 group-hover:translate-x-2">
+          →
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <a
+    href="#summer"
+    className="absolute bottom-7 left-1/2 z-10 hidden -translate-x-1/2 animate-bounce text-white md:block"
+  >
+    <Mouse size={36} strokeWidth={1.8} />
+  </a>
+</section>
 
       {/* SUMMER EVENT */}
       <section
