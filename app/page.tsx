@@ -22,7 +22,7 @@ import {
   Ticket,
   QrCode,
 } from "lucide-react";
-
+import Image from "next/image";
 import TrailMap from "@/components/TrailMap";
 import StayPlaySection from "@/components/StayPlaySection";
 import EventsSection from "@/components/EventsSection";
@@ -418,11 +418,14 @@ export default function Home() {
     </div>
 
     <div className="grid items-center gap-7 md:grid-cols-2 md:gap-14">
-      <img
-        src="/summer-event.jpg"
-        alt="Summer Event"
-        className="h-[260px] w-full rounded-2xl object-cover shadow-[0_30px_90px_rgba(0,0,0,0.55)] md:h-auto"
-      />
+<div className="relative min-h-[420px] overflow-hidden rounded-2xl md:min-h-[760px]">
+  <Image
+    src="/summer-kickoff.jpg"
+    alt="Summer Kick Off"
+    fill
+    className="object-contain md:object-cover"
+  />
+</div>
 
       <div className="space-y-5 md:space-y-6 md:pt-20">
         <div className="touch-manipulation rounded-2xl border border-white/10 bg-white/[0.05] p-5 shadow-[0_18px_55px_rgba(0,0,0,0.28)] backdrop-blur-md transition active:scale-[0.98] active:border-[#f2c06b] md:p-6">
