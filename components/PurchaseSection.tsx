@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -60,38 +60,28 @@ const EVENTS = [
       },
     ],
   },
-  {
-    name: "Memorial Day Weekend 2026",
-    startDate: "2026-05-22",
-    endDate: "2026-05-25",
-    displayDate: "May 22 - May 25, 2026",
-    tickets: [
-      {
-        name: "Child Ticket",
-        subtitle: "Age 3-8",
-        desc: "Special pricing for children ages 3 to 8",
-        price: 10,
-      },
-      {
-        name: "Saturday ONLY",
-        subtitle: "One Day Pass",
-        desc: "Saturday access only",
-        price: 60,
-      },
-      {
-        name: "Weekend Pass",
-        subtitle: "Friday to Monday",
-        desc: "Memorial Day weekend access",
-        price: 75,
-      },
-    ],
-  },
 ];
 
 export default function PurchasePage() {
   const router = useRouter();
 
-  const [activeTab, setActiveTab] = useState<TabType>("day");
+  const [activeTab, setActiveTab] =
+    useState<TabType>("day");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    const tab = params.get("tab");
+
+    if (
+      tab === "membership" ||
+      tab === "events" ||
+      tab === "day"
+    ) {
+      setActiveTab(tab as TabType);
+    }
+  }, []);
+
   const [dateRange, setDateRange] = useState("");
   const [showCalendar, setShowCalendar] = useState(false);
 
@@ -103,12 +93,7 @@ export default function PurchasePage() {
 
   const [memberPeople, setMemberPeople] = useState(2);
   const [memberMachines, setMemberMachines] = useState(1);
-
-  const today = new Date();
-
-  const currentEvent =
-    EVENTS.find((event) => new Date(event.endDate) >= today) || EVENTS[0];
-
+  const currentEvent = EVENTS[0];
   const eventTickets = currentEvent.tickets;
 
   const [ticketQty, setTicketQty] = useState<Record<string, number>>({});
@@ -117,8 +102,10 @@ export default function PurchasePage() {
 
   const daySubtotal = useMemo(() => {
     let total = people * 10 + machines * 15;
+
     if (nightRide) total += people * 5;
     if (tentCamping) total += tentNights * 10;
+
     return total;
   }, [people, machines, nightRide, tentCamping, tentNights]);
 
@@ -129,6 +116,7 @@ export default function PurchasePage() {
   const memberTotal = useMemo(() => {
     const extraPeople = Math.max(0, memberPeople - 2) * 50;
     const extraMachines = Math.max(0, memberMachines - 1) * 100;
+
     return 500 + extraPeople + extraMachines;
   }, [memberPeople, memberMachines]);
 
@@ -171,10 +159,6 @@ export default function PurchasePage() {
       nightRide,
       tentCamping,
       tentNights: tentCamping ? tentNights : 0,
-      tentCampingTotal,
-      subtotal: daySubtotal,
-      tax: dayTax,
-      fee: dayFee,
       total: dayTotal,
     });
   };
@@ -194,10 +178,8 @@ export default function PurchasePage() {
     addToCartOrSignIn({
       type: "Event Ticket",
       event: currentEvent.name,
-      eventDate: currentEvent.displayDate,
       ticketName: ticket.name,
       quantity: qty,
-      price: ticket.price,
       total: ticket.price * qty,
     });
   };
@@ -210,28 +192,29 @@ export default function PurchasePage() {
   };
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#10100f] px-4 py-10 text-white md:py-14">
+    <main className="relative min-h-screen overflow-hidden bg-[#10100f] px-4 py-8 text-white selection:bg-[#f2c06b] selection:text-black md:py-14">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_10%,rgba(29,109,84,0.35),transparent_32%),radial-gradient(circle_at_85%_8%,rgba(246,195,95,0.20),transparent_32%),radial-gradient(circle_at_50%_95%,rgba(35,126,96,0.25),transparent_40%),linear-gradient(180deg,#111312_0%,#201a13_45%,#0b1110_100%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:48px_48px] opacity-20" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[180px] bg-gradient-to-b from-[#1d6d54]/35 to-transparent" />
 
       <section className="relative z-10 mx-auto w-full max-w-[1120px]">
-        <div className="mb-8 text-center">
-          <p className="text-[11px] font-black uppercase tracking-[0.32em] text-[#63d6b8] md:text-sm">
+        <div className="mb-7 text-center md:mb-8">
+          <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[#63d6b8] md:text-sm">
             River Neck Acres
           </p>
 
-          <h1 className="mt-3 text-[34px] font-black tracking-tight text-white md:text-5xl">
+          <h1 className="mt-3 text-[30px] font-black tracking-tight text-white md:text-5xl">
             Day Pass & More
           </h1>
 
-          <p className="mx-auto mt-3 max-w-[700px] text-[16px] font-semibold leading-[1.55] text-white/75 md:text-lg">
+          <p className="mx-auto mt-3 max-w-[640px] text-[14px] font-semibold leading-[1.6] text-white/75 md:text-lg">
             Purchase your passes, memberships, and event tickets.
           </p>
         </div>
 
-        <div className="mb-6 grid grid-cols-1 gap-2 rounded-xl border border-white/15 bg-white/10 p-2 shadow-[0_20px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:grid-cols-3">
-          <TabButton active={activeTab === "day"} onClick={() => setActiveTab("day")}>
+        <div className="mb-5 grid grid-cols-1 gap-2 rounded-2xl border border-white/15 bg-white/10 p-2 shadow-[0_20px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:grid-cols-3">
+          <TabButton
+            active={activeTab === "day"}
+            onClick={() => setActiveTab("day")}
+          >
             Day Pass
           </TabButton>
 
@@ -239,7 +222,7 @@ export default function PurchasePage() {
             active={activeTab === "membership"}
             onClick={() => setActiveTab("membership")}
           >
-            Annual Membership
+            Membership
           </TabButton>
 
           <TabButton
@@ -250,25 +233,29 @@ export default function PurchasePage() {
           </TabButton>
         </div>
 
+        {/* DAY PASS */}
         {activeTab === "day" && (
           <Panel>
-            <h2 className="text-[28px] font-black md:text-3xl">
+            <h2 className="text-[24px] font-black md:text-3xl">
               Day Pass Details
             </h2>
 
-            <p className="mt-2 text-[15px] font-bold leading-[1.55] text-white/90 md:text-base">
-              $10 per person/day | $15 per machine/day | Optional night ride +$5/day
+            <p className="mt-2 text-[14px] font-bold leading-[1.6] text-white/90 md:text-base">
+              $10 per person/day | $15 per machine/day | Optional night ride
+              +$5/day
             </p>
 
-            <div className="relative mt-8">
-              <label className="mb-3 block font-black">Select Date Range</label>
+            <div className="relative mt-7">
+              <label className="mb-3 block text-[15px] font-black md:text-base">
+                Select Date Range
+              </label>
 
               <button
                 type="button"
                 onClick={() => setShowCalendar((prev) => !prev)}
-                className="flex w-full cursor-pointer items-center gap-3 rounded-lg border border-white/15 bg-[#242226] px-4 py-4 text-left font-bold text-white transition active:scale-[0.98] hover:bg-[#fff0a6] hover:text-black focus:bg-[#fff0a6] focus:text-black"
+                className="flex h-[56px] w-full cursor-pointer touch-manipulation items-center gap-3 rounded-xl border border-white/15 bg-[#242226] px-4 text-left text-[14px] font-bold text-white transition active:scale-[0.98] hover:bg-[#fff0a6] hover:text-black focus:bg-[#fff0a6] focus:text-black md:text-base"
               >
-                <CalendarDays size={22} className="shrink-0" />
+                <CalendarDays size={20} className="shrink-0" />
                 <span>{dateRange || "Select date range"}</span>
               </button>
 
@@ -281,15 +268,14 @@ export default function PurchasePage() {
                 />
               )}
 
-              <p className="mt-3 text-[14px] font-bold leading-[1.5] text-red-300 md:text-base">
-                Day passes are not available during Summer Kick Off (May 14-17, 2026).
-                Event tickets must be purchased separately.
+              <p className="mt-3 text-[13px] font-bold leading-[1.55] text-red-300 md:text-base">
+                Day passes are not available during Summer Kick Off.
               </p>
             </div>
 
             <NumberField
               label="Number of People"
-              icon={<Users size={20} />}
+              icon={<Users size={18} />}
               value={people}
               setValue={setPeople}
               min={1}
@@ -297,7 +283,7 @@ export default function PurchasePage() {
 
             <NumberField
               label="Number of Machines"
-              icon={<Bike size={20} />}
+              icon={<Bike size={18} />}
               value={machines}
               setValue={setMachines}
               min={0}
@@ -306,59 +292,53 @@ export default function PurchasePage() {
             <CheckRow
               checked={nightRide}
               setChecked={setNightRide}
-              icon={<Moon size={20} />}
+              icon={<Moon size={18} />}
               label="Add Night Ride Pass (+$5)"
             />
 
             <CheckRow
               checked={tentCamping}
               setChecked={setTentCamping}
-              icon={<Tent size={20} />}
+              icon={<Tent size={18} />}
               label="Include Tent Camping"
             />
 
             {tentCamping && (
-              <div className="mt-4 rounded-xl border border-white/15 bg-white/5 p-5">
-                <label className="mb-3 block font-black">Number of Nights</label>
+              <div className="mt-4 rounded-2xl border border-white/15 bg-white/5 p-4 md:p-5">
+                <label className="mb-3 block text-[15px] font-black md:text-base">
+                  Number of Nights
+                </label>
 
                 <select
                   value={tentNights}
                   onChange={(e) => setTentNights(Number(e.target.value))}
-                  className="h-[54px] w-full cursor-pointer rounded-lg border border-white/15 bg-[#242226] px-4 font-black text-white outline-none transition hover:border-[#f6c35f] focus:border-[#63d6b8]"
+                  className="h-[54px] w-full cursor-pointer rounded-xl border border-white/15 bg-[#242226] px-4 text-[15px] font-black text-white outline-none transition hover:border-[#f6c35f] focus:border-[#63d6b8]"
                 >
                   {Array.from({ length: 11 }).map((_, index) => {
                     const night = index + 1;
 
                     return (
-                      <option key={night} value={night} className="bg-[#242226]">
+                      <option key={night} value={night}>
                         {night} {night === 1 ? "Night" : "Nights"}
                       </option>
                     );
                   })}
                 </select>
 
-                <p className="mt-2 text-[14px] font-bold text-white/80 md:text-base">
-                  $10 per night • Unlimited availability
+                <p className="mt-2 text-[13px] font-bold text-white/80 md:text-base">
+                  $10 per night
                 </p>
               </div>
             )}
 
-            <div className="mt-8 border-t border-white/15 pt-5">
+            <div className="mt-7 border-t border-white/15 pt-5">
               <PriceRow label="Subtotal:" value={daySubtotal} />
 
-              {tentCamping && (
-                <PriceRow
-                  label={`Tent Camping (${tentNights} ${
-                    tentNights === 1 ? "night" : "nights"
-                  }):`}
-                  value={tentCampingTotal}
-                />
-              )}
+              <PriceRow label="Admission Tax:" value={dayTax} />
 
-              <PriceRow label="Admission Tax (5%):" value={dayTax} />
-              <PriceRow label="Card Processing Fee (5%):" value={dayFee} />
+              <PriceRow label="Processing Fee:" value={dayFee} />
 
-              <div className="mt-4 flex justify-between border-t border-white/15 pt-4 text-xl font-black">
+              <div className="mt-4 flex justify-between border-t border-white/15 pt-4 text-[18px] font-black md:text-xl">
                 <span>Total:</span>
                 <span>${dayTotal.toFixed(2)}</span>
               </div>
@@ -368,21 +348,24 @@ export default function PurchasePage() {
           </Panel>
         )}
 
+        {/* MEMBERSHIP */}
         {activeTab === "membership" && (
           <Panel>
-            <h2 className="text-[28px] font-black md:text-3xl">
+            <h2 className="text-[24px] font-black md:text-3xl">
               Membership Details
             </h2>
 
-            <p className="mt-2 text-[15px] font-bold leading-[1.55] text-white/90 md:text-base">
-              Base package: $500 for 2 people, 1 machine. Includes dry camping.
-              Does not include the four major annual events.
+            <p className="mt-2 text-[14px] font-bold leading-[1.6] text-white/90 md:text-base">
+              Base package: $500 for 2 people, 1 machine.
             </p>
 
-            <div className="mt-8 rounded-xl bg-white/15 p-5">
-              <h3 className="font-black">Membership Period</h3>
-              <p className="font-semibold text-white/90">
-                Valid for 1 full year from the date of purchase.
+            <div className="mt-7 rounded-2xl bg-white/10 p-4 md:p-5">
+              <h3 className="text-[15px] font-black md:text-base">
+                Membership Period
+              </h3>
+
+              <p className="mt-1 text-[14px] font-semibold text-white/90 md:text-base">
+                Valid for 1 full year from purchase date.
               </p>
             </div>
 
@@ -391,7 +374,7 @@ export default function PurchasePage() {
               value={memberPeople}
               setValue={setMemberPeople}
               min={2}
-              note="Base includes 2 people. Additional people: +$50 each"
+              note="Additional people: +$50 each"
             />
 
             <NumberField
@@ -399,73 +382,79 @@ export default function PurchasePage() {
               value={memberMachines}
               setValue={setMemberMachines}
               min={1}
-              note="Base includes 1 machine. Additional machines: +$100 each"
+              note="Additional machines: +$100 each"
             />
 
-            <div className="mt-8 border-t border-white/15 pt-5">
+            <div className="mt-7 border-t border-white/15 pt-5">
               <PriceRow label="Base Package:" value={500} />
 
-              <div className="mt-4 flex justify-between border-t border-white/15 pt-4 text-xl font-black">
+              <div className="mt-4 flex justify-between border-t border-white/15 pt-4 text-[18px] font-black md:text-xl">
                 <span>Total:</span>
-                <span className="text-[#63d6b8]">${memberTotal.toFixed(2)}</span>
+                <span className="text-[#63d6b8]">
+                  ${memberTotal.toFixed(2)}
+                </span>
               </div>
-            </div>
-
-            <div className="mt-6 rounded-xl bg-white/15 p-5">
-              <h3 className="mb-2 font-black">Membership Benefits:</h3>
-              <ul className="list-disc space-y-1 pl-5 text-[15px] font-semibold leading-[1.55] text-white/90 md:text-base">
-                <li>Unlimited day riding for 1 full year</li>
-                <li>Dry camping included</li>
-                <li>Access to all trails</li>
-                <li>Valid for 2 people and 1 machine</li>
-                <li>Does not include entry to the four major annual events</li>
-              </ul>
             </div>
 
             <AddToCartButton onClick={handleMembershipAdd} />
           </Panel>
         )}
 
+        {/* EVENTS */}
         {activeTab === "events" && (
           <Panel>
-            <div className="mb-6 flex items-start gap-3">
-              <Ticket size={26} className="mt-1 shrink-0" />
+            <div className="mb-5 flex items-start gap-3">
+              <Ticket size={22} className="mt-1 shrink-0" />
 
               <div>
-                <h2 className="text-[28px] font-black md:text-3xl">
+                <h2 className="text-[24px] font-black md:text-3xl">
                   Event Tickets
                 </h2>
 
-                <p className="text-[15px] font-semibold leading-[1.55] text-white/90 md:text-base">
-                  Purchase tickets for the next upcoming event.
+                <p className="text-[14px] font-semibold leading-[1.6] text-white/90 md:text-base">
+                  Purchase tickets for the next event.
                 </p>
               </div>
             </div>
 
-            <div className="mb-6 rounded-xl border border-[#63d6b8]/20 bg-gradient-to-r from-[#1d6d54]/45 to-[#f6c35f]/12 p-5">
-              <h3 className="text-[23px] font-black leading-tight md:text-2xl">
+            <div className="mb-5 rounded-2xl border border-[#63d6b8]/20 bg-gradient-to-r from-[#1d6d54]/45 to-[#f6c35f]/12 p-4 md:p-5">
+              <h3 className="text-[20px] font-black leading-tight md:text-2xl">
                 {currentEvent.name}
               </h3>
-              <p className="mt-1 font-bold">{currentEvent.displayDate}</p>
+
+              <p className="mt-1 text-[14px] font-bold md:text-base">
+                {currentEvent.displayDate}
+              </p>
             </div>
 
             <div className="space-y-4">
               {eventTickets.map((ticket) => (
                 <div
                   key={ticket.name}
-                  className="grid grid-cols-1 gap-5 rounded-xl border border-white/15 bg-white/5 p-5 transition hover:border-[#63d6b8]/60 hover:bg-white/10 md:grid-cols-[1fr_auto_auto_auto] md:items-center"
+                  className="grid grid-cols-1 gap-4 rounded-2xl border border-white/15 bg-white/5 p-4 transition hover:border-[#63d6b8]/60 hover:bg-white/10 active:scale-[0.99] active:border-[#63d6b8]/60 md:grid-cols-[1fr_auto_auto_auto] md:items-center md:p-5"
                 >
                   <div>
-                    <h3 className="text-xl font-black">{ticket.name}</h3>
-                    <p className="font-bold">{ticket.subtitle}</p>
-                    <p className="font-semibold text-white/80">{ticket.desc}</p>
+                    <h3 className="text-[18px] font-black md:text-xl">
+                      {ticket.name}
+                    </h3>
+
+                    <p className="text-[14px] font-bold md:text-base">
+                      {ticket.subtitle}
+                    </p>
+
+                    <p className="text-[13px] font-semibold leading-[1.55] text-white/80 md:text-base">
+                      {ticket.desc}
+                    </p>
                   </div>
 
                   <div className="text-left md:text-right">
-                    <p className="text-2xl font-black text-[#63d6b8]">
+                    <p className="text-[24px] font-black text-[#63d6b8]">
                       ${ticket.price.toFixed(2)}
                     </p>
-                    <p className="text-xs font-black text-white/80">per ticket</p>
+
+                    <p className="text-[11px] font-black text-white/80">
+                      per ticket
+                    </p>
                   </div>
 
                   <select
@@ -473,10 +462,10 @@ export default function PurchasePage() {
                     onChange={(e) =>
                       updateTicketQty(ticket.name, Number(e.target.value))
                     }
-                    className="h-[52px] w-full cursor-pointer rounded-lg border border-white/15 bg-[#242226] px-3 text-center font-black text-white outline-none transition hover:border-[#f6c35f] focus:border-[#63d6b8] md:w-[88px]"
+                    className="h-[50px] w-full cursor-pointer rounded-xl border border-white/15 bg-[#242226] px-3 text-center text-[15px] font-black text-white outline-none transition hover:border-[#f6c35f] focus:border-[#63d6b8] md:w-[88px]"
                   >
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-                      <option key={num} value={num} className="bg-[#242226]">
+                    {[1, 2, 3, 4, 5].map((num) => (
+                      <option key={num} value={num}>
                         {num}
                       </option>
                     ))}
@@ -484,7 +473,7 @@ export default function PurchasePage() {
 
                   <button
                     onClick={() => handleTicketAdd(ticket)}
-                    className="h-[52px] w-full cursor-pointer rounded-lg bg-[#1d6d54] px-6 font-black text-white shadow-[0_0_24px_rgba(29,109,84,0.45)] transition-all duration-300 active:scale-95 hover:bg-[#f6c35f] hover:text-black md:w-auto"
+                    className="h-[50px] w-full cursor-pointer touch-manipulation rounded-xl bg-[#1d6d54] px-6 text-[15px] font-black text-white shadow-[0_0_24px_rgba(29,109,84,0.45)] transition-all duration-300 active:scale-95 hover:bg-[#f6c35f] hover:text-black md:w-auto"
                   >
                     Add
                   </button>
@@ -511,10 +500,10 @@ function TabButton({
     <button
       type="button"
       onClick={onClick}
-      className={`cursor-pointer rounded-xl px-4 py-4 text-[14px] font-black transition-all duration-300 active:scale-95 md:text-sm ${
+      className={`cursor-pointer touch-manipulation rounded-xl px-4 py-3 text-[13px] font-black transition-all duration-300 active:scale-95 md:py-4 md:text-sm ${
         active
           ? "bg-[#3a343a] text-white ring-2 ring-white/25 shadow-[0_0_22px_rgba(255,255,255,0.16)]"
-          : "text-white hover:bg-white/10"
+          : "text-white hover:bg-white/10 active:bg-white/10"
       }`}
     >
       {children}
@@ -524,7 +513,7 @@ function TabButton({
 
 function Panel({ children }: { children: ReactNode }) {
   return (
-    <div className="rounded-2xl border border-white/20 bg-[#373338]/88 p-5 shadow-[0_30px_100px_rgba(0,0,0,0.45)] backdrop-blur-xl md:p-8">
+    <div className="rounded-2xl border border-white/20 bg-[#373338]/88 p-4 shadow-[0_30px_100px_rgba(0,0,0,0.45)] backdrop-blur-xl md:p-8">
       {children}
     </div>
   );
@@ -546,8 +535,8 @@ function NumberField({
   icon?: ReactNode;
 }) {
   return (
-    <div className="mt-7">
-      <label className="mb-3 flex items-center gap-2 font-black">
+    <div className="mt-6">
+      <label className="mb-3 flex items-center gap-2 text-[15px] font-black md:text-base">
         {icon}
         {label}
       </label>
@@ -557,11 +546,11 @@ function NumberField({
         min={min}
         value={value}
         onChange={(e) => setValue(Math.max(min, Number(e.target.value)))}
-        className="h-[54px] w-full rounded-lg border border-white/15 bg-[#242226] px-4 text-[16px] font-black text-white outline-none transition hover:border-[#f6c35f] focus:border-[#63d6b8]"
+        className="h-[54px] w-full rounded-xl border border-white/15 bg-[#242226] px-4 text-[15px] font-black text-white outline-none transition hover:border-[#f6c35f] focus:border-[#63d6b8]"
       />
 
       {note && (
-        <p className="mt-2 text-[14px] font-semibold leading-[1.45] text-white/90 md:text-base">
+        <p className="mt-2 text-[13px] font-semibold leading-[1.55] text-white/90 md:text-base">
           {note}
         </p>
       )}
@@ -584,14 +573,16 @@ function CheckRow({
     <button
       type="button"
       onClick={() => setChecked(!checked)}
-      className="mt-6 flex w-full cursor-pointer items-center gap-3 rounded-xl border border-white/15 px-4 py-4 text-left text-[15px] font-black transition-all duration-300 active:scale-[0.98] hover:border-[#f6c35f] hover:bg-white/10"
+      className="mt-5 flex w-full cursor-pointer touch-manipulation items-center gap-3 rounded-2xl border border-white/15 px-4 py-4 text-left text-[14px] font-black transition-all duration-300 active:scale-[0.98] hover:border-[#f6c35f] hover:bg-white/10 md:text-[15px]"
     >
       <span
         className={`h-4 w-4 shrink-0 rounded-full border ${
           checked ? "border-[#63d6b8] bg-[#63d6b8]" : "border-[#63d6b8]"
         }`}
       />
+
       <span className="shrink-0">{icon}</span>
+
       <span>{label}</span>
     </button>
   );
@@ -599,7 +590,7 @@ function CheckRow({
 
 function PriceRow({ label, value }: { label: string; value: number }) {
   return (
-    <div className="mt-3 flex justify-between gap-4 text-[15px] font-black md:text-base">
+    <div className="mt-3 flex justify-between gap-4 text-[14px] font-black md:text-base">
       <span>{label}</span>
       <span className="shrink-0">${value.toFixed(2)}</span>
     </div>
@@ -610,7 +601,7 @@ function AddToCartButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="mt-6 h-[58px] w-full cursor-pointer rounded-xl bg-[#1d6d54] text-[16px] font-black text-white shadow-[0_0_28px_rgba(29,109,84,0.45)] transition-all duration-300 active:scale-95 hover:bg-[#f6c35f] hover:text-black hover:shadow-[0_0_32px_rgba(246,195,95,0.45)]"
+      className="mt-6 h-[56px] w-full cursor-pointer touch-manipulation rounded-2xl bg-[#1d6d54] text-[15px] font-black text-white shadow-[0_0_28px_rgba(29,109,84,0.45)] transition-all duration-300 active:scale-95 hover:bg-[#f6c35f] hover:text-black hover:shadow-[0_0_32px_rgba(246,195,95,0.45)] md:h-[58px] md:text-[16px]"
     >
       Add to Cart
     </button>
@@ -639,30 +630,30 @@ function DatePicker({ onPick }: { onPick: (date: string) => void }) {
   };
 
   return (
-    <div className="absolute left-0 top-[90px] z-20 w-full rounded-xl border border-white/15 bg-[#242226] p-4 shadow-[0_30px_80px_rgba(0,0,0,0.65)] md:max-w-[440px] md:p-5">
+    <div className="absolute left-0 top-[82px] z-20 w-full rounded-2xl border border-white/15 bg-[#242226] p-4 shadow-[0_30px_80px_rgba(0,0,0,0.65)] md:max-w-[440px] md:p-5">
       <div className="mb-5 flex items-center justify-between">
         <button
           type="button"
           onClick={goPrevMonth}
-          className="cursor-pointer rounded-md px-3 py-2 text-xl font-black transition hover:bg-white/10"
+          className="cursor-pointer touch-manipulation rounded-md px-3 py-2 text-xl font-black transition hover:bg-white/10 active:scale-90"
         >
           ‹
         </button>
 
-        <div className="text-center text-lg font-black">
+        <div className="text-center text-[17px] font-black md:text-lg">
           {monthName} {year}
         </div>
 
         <button
           type="button"
           onClick={goNextMonth}
-          className="cursor-pointer rounded-md px-3 py-2 text-xl font-black transition hover:bg-white/10"
+          className="cursor-pointer touch-manipulation rounded-md px-3 py-2 text-xl font-black transition hover:bg-white/10 active:scale-90"
         >
           ›
         </button>
       </div>
 
-      <div className="mb-3 grid grid-cols-7 text-center text-xs font-black text-white/60">
+      <div className="mb-3 grid grid-cols-7 text-center text-[11px] font-black text-white/60 md:text-xs">
         {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
           <span key={day}>{day}</span>
         ))}
@@ -681,7 +672,7 @@ function DatePicker({ onPick }: { onPick: (date: string) => void }) {
               key={day}
               type="button"
               onClick={() => onPick(`${monthName} ${day}, ${year}`)}
-              className="cursor-pointer rounded-md py-2 text-sm font-black transition hover:bg-[#f6c35f] hover:text-black"
+              className="cursor-pointer touch-manipulation rounded-lg py-2 text-[13px] font-black transition hover:bg-[#f6c35f] hover:text-black active:scale-90 active:bg-[#f6c35f] active:text-black md:text-sm"
             >
               {day}
             </button>

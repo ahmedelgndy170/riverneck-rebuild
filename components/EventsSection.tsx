@@ -21,7 +21,7 @@ const events = [
   { start: "2026-07-02", end: "2026-07-05", dateLabel: "Jul 2-5", title: "4th of July Weekend", details: "Night ride Sat 9:30pm" },
   { start: "2026-07-20", end: "2026-07-30", dateLabel: "Jul 20-30", title: "CLOSED FOR SUMMER GROUNDSKEEPING", details: "" },
   { start: "2026-09-03", end: "2026-09-07", dateLabel: "Sep 3-7", title: "Labor Day 4-Day Weekend", details: "Night ride Sat 9:30pm" },
-  { start: "2026-10-01", end: "2026-10-04", dateLabel: "Oct 1-4", title: "Free Weekend Charity Event", details: "ONLY FRI & SAT, Min $1 donation to charity required per day, Night ride Sat 9:30pm" },
+  { start: "2026-10-01", end: "2026-10-04", dateLabel: "Free Weekend Charity Event", title: "Free Weekend Charity Event", details: "ONLY FRI & SAT, Min $1 donation to charity required per day, Night ride Sat 9:30pm" },
   { start: "2026-10-22", end: "2026-10-25", dateLabel: "Oct 22-25", title: "Halloween Mudbash", details: "Trick-or-Treat, costume contest, $2500 pumpkin hunt, night ride Sat 9:30pm" },
   { start: "2026-11-12", end: "2026-11-15", dateLabel: "Nov 12-15", title: "Annual Fall Bash: Concert, Racing and More", details: "Night ride 11:30pm, ACTIVITIES AND CONCERT SAT 11/14" },
   { start: "2026-11-25", end: "2026-11-29", dateLabel: "Nov 25-29", title: "Open for Thanksgiving", details: "Dinner Thursday 11/26 4pm" },
@@ -29,45 +29,54 @@ const events = [
   { start: "2026-12-31", end: "2027-01-03", dateLabel: "Dec 31-Jan 3", title: "New Years @ the Neck", details: "Night ride Sat" },
 ];
 
-function getStatus(event: (typeof events)[number], upcomingId: number, index: number) {
+function getStatus(
+  event: (typeof events)[number],
+  upcomingId: number,
+  index: number
+) {
   const today = new Date();
   const end = new Date(event.end + "T23:59:59");
 
   if (end < today) return "past";
   if (index === upcomingId) return "coming";
+
   return "future";
 }
 
 export default function EventsSection() {
   const upcomingId = events.findIndex((event) => {
     const end = new Date(event.end + "T23:59:59");
+
     return end >= new Date();
   });
 
   return (
     <section
       id="events"
-      className="relative overflow-hidden bg-[#10100f] px-4 py-20 text-white md:px-[5%] md:py-28"
+      className="relative overflow-hidden bg-[#10100f] px-4 py-16 text-white md:px-[5%] md:py-28"
     >
+      {/* BG */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_10%,rgba(29,109,84,0.22),transparent_32%),radial-gradient(circle_at_85%_8%,rgba(246,195,95,0.10),transparent_32%),linear-gradient(180deg,#111312_0%,#201a13_48%,#0b1110_100%)]" />
 
       <div className="relative z-10">
-        <div className="mb-10 text-center md:mb-14">
-          <h2 className="text-[34px] font-black uppercase leading-[0.95] tracking-[-1px] md:text-[52px]">
+        {/* HEADER */}
+        <div className="mb-9 text-center md:mb-14">
+          <h2 className="text-[30px] font-black uppercase leading-[0.95] tracking-[-1px] md:text-[52px]">
             EVENTS & SCHEDULE 2025-2026
           </h2>
 
-          <p className="mt-4 text-[18px] font-medium text-white/75 md:mt-6 md:text-[22px]">
+          <p className="mt-4 text-[15px] font-medium leading-[1.6] text-white/75 md:mt-6 md:text-[22px]">
             Plan your visit with our event calendar
           </p>
         </div>
 
+        {/* EVENTS CARD */}
         <div className="mx-auto max-w-[1320px] rounded-[22px] border border-[#25b99a]/25 bg-[#2b221d]/92 p-4 shadow-[0_35px_110px_rgba(0,0,0,0.55)] backdrop-blur-xl md:p-10">
-          <h3 className="mb-6 text-center text-[24px] font-black uppercase leading-tight md:mb-8 md:text-[30px]">
+          <h3 className="mb-5 text-center text-[21px] font-black uppercase leading-tight md:mb-8 md:text-[30px]">
             River Neck Acres ATV Park - Events Schedule
           </h3>
 
-          <div className="space-y-4">
+          <div className="space-y-3 md:space-y-4">
             {events.map((event, index) => {
               const status = getStatus(event, upcomingId, index);
 
@@ -75,7 +84,7 @@ export default function EventsSection() {
                 <div
                   key={`${event.dateLabel}-${event.title}`}
                   className={[
-                    "group flex flex-col gap-4 rounded-[16px] border px-4 py-5 transition-all duration-300 md:flex-row md:items-start md:gap-8 md:px-6",
+                    "group flex touch-manipulation flex-col gap-4 rounded-[16px] border px-4 py-5 transition-all duration-300 active:scale-[0.99] md:flex-row md:items-start md:gap-8 md:px-6",
                     status === "coming"
                       ? "border-[#f2b35f] bg-[#2a2114] shadow-[0_0_22px_rgba(242,179,95,0.23)]"
                       : "",
@@ -83,13 +92,14 @@ export default function EventsSection() {
                       ? "border-white/5 bg-[#171619]/80 text-white/55"
                       : "",
                     status === "future"
-                      ? "border-white/10 bg-[#18171a]/90 hover:border-[#25b99a]/60 hover:bg-[#202024]"
+                      ? "border-white/10 bg-[#18171a]/90 hover:border-[#25b99a]/60 hover:bg-[#202024] active:border-[#25b99a]/60 active:bg-[#202024]"
                       : "",
                   ].join(" ")}
                 >
-                  <div className="flex items-center gap-3 text-[16px] font-black md:min-w-[150px] md:text-[17px]">
+                  {/* DATE */}
+                  <div className="flex items-center gap-3 text-[14px] font-black md:min-w-[150px] md:text-[17px]">
                     <Calendar
-                      size={20}
+                      size={18}
                       className={
                         status === "past"
                           ? "shrink-0 text-[#25b99a]/40"
@@ -97,29 +107,38 @@ export default function EventsSection() {
                       }
                     />
 
-                    <span className={status === "past" ? "text-white/55" : "text-white"}>
+                    <span
+                      className={
+                        status === "past"
+                          ? "text-white/55"
+                          : "text-white"
+                      }
+                    >
                       {event.dateLabel}
                     </span>
                   </div>
 
+                  {/* CONTENT */}
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-col gap-2 md:flex-row md:flex-wrap md:items-center md:gap-3">
                       <h4
-                        className={`text-[19px] font-black leading-tight md:text-[20px] ${
-                          status === "past" ? "text-white/55" : "text-white"
+                        className={`text-[17px] font-black leading-tight md:text-[20px] ${
+                          status === "past"
+                            ? "text-white/55"
+                            : "text-white"
                         }`}
                       >
                         {event.title}
                       </h4>
 
                       {status === "coming" && (
-                        <span className="w-fit rounded-full bg-[#f2b35f] px-3 py-1 text-[12px] font-black text-black">
+                        <span className="w-fit rounded-full bg-[#f2b35f] px-3 py-1 text-[11px] font-black text-black md:text-[12px]">
                           Coming Up
                         </span>
                       )}
 
                       {status === "past" && (
-                        <span className="text-[12px] font-black text-white/40">
+                        <span className="text-[11px] font-black text-white/40 md:text-[12px]">
                           (Past Event)
                         </span>
                       )}
@@ -127,8 +146,10 @@ export default function EventsSection() {
 
                     {event.details && (
                       <p
-                        className={`mt-2 text-[15px] font-medium leading-[1.55] md:text-[16px] ${
-                          status === "past" ? "text-white/40" : "text-white/70"
+                        className={`mt-2 text-[13px] font-medium leading-[1.65] md:text-[16px] ${
+                          status === "past"
+                            ? "text-white/40"
+                            : "text-white/70"
                         }`}
                       >
                         {event.details}
@@ -141,44 +162,47 @@ export default function EventsSection() {
           </div>
         </div>
 
-        <div className="mx-auto mt-10 max-w-[1320px] rounded-[22px] border border-[#f2b35f]/45 bg-[#5a3d2d]/55 p-5 shadow-[0_30px_90px_rgba(0,0,0,0.42)] backdrop-blur-xl md:mt-12 md:p-10">
-          <h3 className="mb-4 text-[24px] font-black uppercase md:mb-5 md:text-[28px]">
+        {/* VENDOR */}
+        <div className="mx-auto mt-8 max-w-[1320px] rounded-[22px] border border-[#f2b35f]/45 bg-[#5a3d2d]/55 p-5 shadow-[0_30px_90px_rgba(0,0,0,0.42)] backdrop-blur-xl md:mt-12 md:p-10">
+          <h3 className="mb-4 text-[22px] font-black uppercase md:mb-5 md:text-[28px]">
             Vendor Information
           </h3>
 
-          <p className="mb-5 text-[16px] font-bold leading-[1.55] text-white/85 md:text-[17px]">
+          <p className="mb-5 text-[14px] font-bold leading-[1.65] text-white/85 md:text-[17px]">
             Interested in being a vendor at our events? We'd love to have you join us!
           </p>
 
-          <div className="mb-6 flex items-start gap-3 text-[18px] font-black">
-            <Phone size={20} className="mt-1 shrink-0 text-[#f2b35f]" />
+          <div className="mb-6 flex items-start gap-3 text-[16px] font-black md:text-[18px]">
+            <Phone size={19} className="mt-1 shrink-0 text-[#f2b35f]" />
 
             <div className="flex flex-col">
               <span className="text-white">Contact Jamey:</span>
 
-              <a
-                href="tel:8435034741"
-                className="w-fit cursor-pointer text-[#f2b35f] transition hover:text-white"
-              >
-                843.503.4741
-              </a>
+            <a
+  href="tel:8435034741"
+  className="w-fit cursor-pointer touch-manipulation text-white transition-all duration-300 hover:text-[#f2b35f] active:scale-95 active:text-[#f2b35f]"
+>
+  843.503.4741
+</a>
             </div>
           </div>
 
-          <div className="mb-6 rounded-[12px] border border-white/15 bg-[#242226]/90 p-5 text-[16px] font-medium text-white/85 md:p-6">
+          <div className="mb-6 rounded-[12px] border border-white/15 bg-[#242226]/90 p-4 text-[14px] font-medium leading-[1.65] text-white/85 md:p-6 md:text-[16px]">
             <p className="mb-2 font-black">Vendor Fees:</p>
+
             <p>• $100 per day</p>
+
             <p>• $250 Thursday - Sunday</p>
           </div>
 
-          <a
-            href={VENDOR_FORM_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex w-full cursor-pointer justify-center rounded-[10px] bg-[#fff4d8] px-8 py-4 text-[16px] font-black text-[#6b4a31] transition hover:scale-105 hover:bg-[#f2b35f] hover:text-black md:w-auto"
-          >
-            Apply as Vendor
-          </a>
+         <a
+  href={VENDOR_FORM_URL}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="inline-flex h-[54px] w-full cursor-pointer touch-manipulation items-center justify-center rounded-[12px] bg-[#f2b35f] px-8 text-[15px] font-black text-black shadow-[0_0_28px_rgba(242,179,95,0.35)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#ffd27b] hover:shadow-[0_0_38px_rgba(242,179,95,0.55)] active:scale-95 active:bg-[#ffd27b] md:h-auto md:w-auto md:py-4 md:text-[16px]"
+>
+  Apply as Vendor
+</a>
         </div>
       </div>
     </section>

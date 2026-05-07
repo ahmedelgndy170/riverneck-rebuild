@@ -30,32 +30,28 @@ function YoutubeIcon() {
 export default function Footer() {
   return (
     <footer className="mt-0 overflow-hidden bg-[linear-gradient(135deg,#4f6f45_0%,#3f6b55_42%,#2f4f3f_100%)] text-white">
-      <div className="mx-auto grid max-w-[1280px] grid-cols-1 gap-12 px-5 py-14 md:grid-cols-2 md:gap-14 md:px-8 lg:grid-cols-[1.35fr_1.35fr_1fr_1fr] lg:gap-20 lg:py-16">
+      <div className="mx-auto grid max-w-[1280px] grid-cols-1 gap-9 px-5 py-11 md:grid-cols-2 md:gap-14 md:px-8 md:py-14 lg:grid-cols-[1.35fr_1.35fr_1fr_1fr] lg:gap-20 lg:py-16">
         {/* LEFT */}
         <div>
-          <h3 className="mb-6 text-[26px] font-black uppercase tracking-[-0.03em] md:mb-8">
+          <h3 className="mb-4 text-[22px] font-black uppercase tracking-[-0.03em] md:mb-8 md:text-[26px]">
             RIVER NECK ACRES
           </h3>
 
-          <p className="max-w-[340px] text-[16px] font-semibold leading-[1.8] text-white/90 md:text-[18px] md:leading-[1.9]">
-            Your premier destination for off-road adventure.
-            60+ miles of trails, camping, and unforgettable
-            experiences.
+          <p className="max-w-[360px] text-[14px] font-semibold leading-[1.75] text-white/90 md:text-[18px] md:leading-[1.9]">
+            Your premier destination for off-road adventure. 60+ miles of
+            trails, camping, and unforgettable experiences.
           </p>
         </div>
 
         {/* CONTACT */}
         <div>
-          <h3 className="mb-6 text-[24px] font-black md:mb-8">
+          <h3 className="mb-4 text-[21px] font-black md:mb-8 md:text-[24px]">
             Contact Info
           </h3>
 
-          <div className="space-y-5 text-[16px] font-semibold leading-[1.7] text-white/90 md:space-y-6 md:text-[18px] md:leading-[1.8]">
-            <div className="flex items-start gap-4">
-              <MapPin
-                size={20}
-                className="mt-1 shrink-0 text-white/85"
-              />
+          <div className="space-y-4 text-[14px] font-semibold leading-[1.65] text-white/90 md:space-y-6 md:text-[18px] md:leading-[1.8]">
+            <div className="flex items-start gap-3 md:gap-4">
+              <MapPin size={19} className="mt-1 shrink-0 text-white/85" />
 
               <span>
                 4459 River Neck Rd
@@ -66,89 +62,62 @@ export default function Footer() {
 
             <a
               href="tel:8433334607"
-              className="flex cursor-pointer items-center gap-4 transition-all duration-300 hover:text-[#f6c35f]"
+              className="flex cursor-pointer touch-manipulation items-center gap-3 transition-all duration-300 hover:text-[#f6c35f] active:scale-[0.98] active:text-[#f6c35f] md:gap-4"
             >
-              <Phone
-                size={20}
-                className="shrink-0 text-white/85"
-              />
+              <Phone size={19} className="shrink-0 text-white/85" />
 
               <span>(843) 333-4607</span>
             </a>
 
             <a
               href="mailto:riverneckacresatv@gmail.com"
-              className="flex min-w-0 cursor-pointer items-center gap-4 transition-all duration-300 hover:text-[#f6c35f]"
+              className="flex min-w-0 cursor-pointer touch-manipulation items-center gap-3 transition-all duration-300 hover:text-[#f6c35f] active:scale-[0.98] active:text-[#f6c35f] md:gap-4"
             >
-              <Mail
-                size={20}
-                className="shrink-0 text-white/85"
-              />
+              <Mail size={19} className="shrink-0 text-white/85" />
 
-              <span className="break-all">
-                riverneckacresatv@gmail.com
-              </span>
+              <span className="break-all">riverneckacresatv@gmail.com</span>
             </a>
           </div>
         </div>
 
         {/* QUICK LINKS */}
         <div>
-          <h3 className="mb-6 text-[24px] font-black md:mb-8">
+          <h3 className="mb-4 text-[21px] font-black md:mb-8 md:text-[24px]">
             Quick Links
           </h3>
 
-          <div className="flex flex-col gap-4 text-[16px] font-semibold text-white/90 md:text-[18px]">
-            <Link
-              href="/about"
-              className="transition-all duration-300 hover:text-[#f6c35f]"
-            >
-              About Us
-            </Link>
-
-            <Link
-              href="/#epic-trails"
-              className="transition-all duration-300 hover:text-[#f6c35f]"
-            >
-              Trails
-            </Link>
-
-            <Link
-              href="/#stay-play"
-              className="transition-all duration-300 hover:text-[#f6c35f]"
-            >
-              Accommodations
-            </Link>
-
-            <Link
-              href="/#events"
-              className="transition-all duration-300 hover:text-[#f6c35f]"
-            >
-              Events
-            </Link>
-
-            <Link
-              href="/#contact"
-              className="transition-all duration-300 hover:text-[#f6c35f]"
-            >
-              Contact
-            </Link>
+          <div className="flex flex-col gap-3 text-[14px] font-semibold text-white/90 md:gap-4 md:text-[18px]">
+            {[
+              { label: "About Us", href: "/about" },
+              { label: "Trails", href: "/#epic-trails" },
+              { label: "Accommodations", href: "/#stay-play" },
+              { label: "Events", href: "/#events" },
+              { label: "Contact", href: "/#contact" },
+            ].map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                className="w-fit cursor-pointer touch-manipulation transition-all duration-300 hover:text-[#f6c35f] active:scale-95 active:text-[#f6c35f]"
+              >
+                {item.label}
+              </Link>
+            ))}
           </div>
         </div>
 
         {/* SOCIAL */}
         <div>
-          <h3 className="mb-6 text-[24px] font-black italic md:mb-8">
+          <h3 className="mb-4 text-[21px] font-black italic md:mb-8 md:text-[24px]">
             Follow Us
           </h3>
 
-          <div className="flex flex-wrap items-center gap-4 md:gap-5">
+          <div className="flex flex-wrap items-center gap-3 md:gap-5">
             <a
               href="https://www.facebook.com/riverneck.acres"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Facebook"
-              className="flex h-14 w-14 cursor-pointer items-center justify-center rounded-2xl bg-white/10 text-white transition-all duration-300 active:scale-90 hover:bg-white/20 hover:text-[#f6c35f]"
+              className="flex h-12 w-12 cursor-pointer touch-manipulation items-center justify-center rounded-2xl bg-white/10 text-white transition-all duration-300 hover:bg-white/20 hover:text-[#f6c35f] active:scale-90 active:bg-white/20 active:text-[#f6c35f] md:h-14 md:w-14"
             >
               <FacebookIcon />
             </a>
@@ -158,7 +127,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram"
-              className="flex h-14 w-14 cursor-pointer items-center justify-center rounded-2xl bg-white/10 text-white transition-all duration-300 active:scale-90 hover:bg-white/20 hover:text-[#f6c35f]"
+              className="flex h-12 w-12 cursor-pointer touch-manipulation items-center justify-center rounded-2xl bg-white/10 text-white transition-all duration-300 hover:bg-white/20 hover:text-[#f6c35f] active:scale-90 active:bg-white/20 active:text-[#f6c35f] md:h-14 md:w-14"
             >
               <InstagramIcon />
             </a>
@@ -166,7 +135,7 @@ export default function Footer() {
             <a
               href="#"
               aria-label="YouTube"
-              className="flex h-14 w-14 cursor-pointer items-center justify-center rounded-2xl bg-white/10 text-white transition-all duration-300 active:scale-90 hover:bg-white/20 hover:text-[#f6c35f]"
+              className="flex h-12 w-12 cursor-pointer touch-manipulation items-center justify-center rounded-2xl bg-white/10 text-white transition-all duration-300 hover:bg-white/20 hover:text-[#f6c35f] active:scale-90 active:bg-white/20 active:text-[#f6c35f] md:h-14 md:w-14"
             >
               <YoutubeIcon />
             </a>
@@ -175,8 +144,8 @@ export default function Footer() {
       </div>
 
       {/* BOTTOM */}
-      <div className="mx-auto max-w-[1280px] border-t border-white/15 px-5 py-6 text-center md:px-10 md:py-7">
-        <p className="text-[14px] font-bold tracking-wide text-white/85 md:text-[17px]">
+      <div className="mx-auto max-w-[1280px] border-t border-white/15 px-5 py-5 text-center md:px-10 md:py-7">
+        <p className="text-[12px] font-bold leading-[1.6] tracking-wide text-white/85 md:text-[17px]">
           © 2026 River Neck Acres ATV Park. All rights reserved.
         </p>
       </div>

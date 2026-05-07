@@ -66,28 +66,28 @@ export default function AuthPage() {
   );
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#101010] px-4 py-10 text-white md:px-6 md:py-16">
+    <main className="relative flex min-h-screen items-center justify-center overflow-x-hidden bg-[#101010] px-4 py-8 text-white selection:bg-[#f2c06b] selection:text-black md:px-6 md:py-16">
       {/* BG */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_10%,rgba(29,109,84,0.30),transparent_32%),radial-gradient(circle_at_85%_8%,rgba(246,195,95,0.16),transparent_32%),linear-gradient(180deg,#111312_0%,#201a13_45%,#0b1110_100%)]" />
 
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:48px_48px] opacity-20" />
 
       {/* CARD */}
-      <div className="relative z-10 w-full max-w-[520px] overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.05] shadow-[0_35px_90px_rgba(0,0,0,0.45)] backdrop-blur-xl">
+      <div className="relative z-10 w-full max-w-[520px] overflow-hidden rounded-[24px] border border-white/10 bg-white/[0.05] shadow-[0_35px_90px_rgba(0,0,0,0.45)] backdrop-blur-xl md:rounded-[28px]">
         {/* HEADER */}
-        <div className="border-b border-white/10 px-6 pb-6 pt-7 text-center md:px-8 md:pb-7 md:pt-8">
-          <div className="mx-auto mb-5 flex h-[76px] w-[76px] items-center justify-center rounded-full border border-[#25b99a]/35 bg-[#25b99a]/12 shadow-[0_0_35px_rgba(37,185,154,0.22)]">
+        <div className="border-b border-white/10 px-5 pb-5 pt-6 text-center md:px-8 md:pb-7 md:pt-8">
+          <div className="mx-auto mb-4 flex h-[68px] w-[68px] items-center justify-center rounded-full border border-[#25b99a]/35 bg-[#25b99a]/12 shadow-[0_0_35px_rgba(37,185,154,0.22)] md:mb-5 md:h-[76px] md:w-[76px]">
             <ShieldCheck
-              size={38}
-              className="text-[#25b99a]"
+              size={32}
+              className="text-[#25b99a] md:size-[38px]"
             />
           </div>
 
-          <h1 className="text-[30px] font-black uppercase tracking-tight text-[#25b99a] md:text-[36px]">
+          <h1 className="text-[26px] font-black uppercase leading-[1] tracking-tight text-[#25b99a] md:text-[36px]">
             River Neck Acres
           </h1>
 
-          <p className="mt-3 text-[15px] font-semibold leading-[1.55] text-white/75 md:text-[17px]">
+          <p className="mt-3 text-[14px] font-semibold leading-[1.55] text-white/75 md:text-[17px]">
             Book your adventure today
           </p>
         </div>
@@ -96,10 +96,10 @@ export default function AuthPage() {
         <div className="grid grid-cols-2 gap-2 border-b border-white/10 bg-white/[0.03] p-2">
           <button
             onClick={() => setTab("signin")}
-            className={`cursor-pointer rounded-xl py-4 text-[15px] font-black transition-all duration-300 active:scale-95 md:text-[16px] ${
+            className={`cursor-pointer touch-manipulation rounded-xl py-3 text-[14px] font-black transition-all duration-300 active:scale-95 md:py-4 md:text-[16px] ${
               tab === "signin"
                 ? "bg-[#151515] text-white shadow-[0_0_22px_rgba(255,255,255,0.08)]"
-                : "text-white/70 hover:bg-white/10 hover:text-white"
+                : "text-white/70 hover:bg-white/10 hover:text-white active:bg-white/10 active:text-white"
             }`}
           >
             Sign In
@@ -107,10 +107,10 @@ export default function AuthPage() {
 
           <button
             onClick={() => setTab("signup")}
-            className={`cursor-pointer rounded-xl py-4 text-[15px] font-black transition-all duration-300 active:scale-95 md:text-[16px] ${
+            className={`cursor-pointer touch-manipulation rounded-xl py-3 text-[14px] font-black transition-all duration-300 active:scale-95 md:py-4 md:text-[16px] ${
               tab === "signup"
                 ? "bg-[#151515] text-white shadow-[0_0_22px_rgba(255,255,255,0.08)]"
-                : "text-white/70 hover:bg-white/10 hover:text-white"
+                : "text-white/70 hover:bg-white/10 hover:text-white active:bg-white/10 active:text-white"
             }`}
           >
             Sign Up
@@ -118,41 +118,41 @@ export default function AuthPage() {
         </div>
 
         {/* CONTENT */}
-        <div className="px-5 py-6 md:px-8 md:py-8">
+        <div className="px-4 py-5 md:px-8 md:py-8">
           {tab === "signin" ? (
             <form className="space-y-5">
               <Field
                 label="Email"
-                icon={<Mail size={18} />}
+                icon={<Mail size={17} />}
               >
                 <input
                   type="email"
                   placeholder="your@email.com"
-                  className="h-[54px] w-full rounded-xl border border-white/10 bg-[#121212] px-4 text-white outline-none transition-all duration-300 focus:border-[#f2c06b] focus:bg-black/40"
+                  className="h-[52px] w-full rounded-xl border border-white/10 bg-[#121212] px-4 text-[14px] text-white outline-none transition-all duration-300 focus:border-[#f2c06b] focus:bg-black/40 md:h-[54px] md:text-[15px]"
                 />
               </Field>
 
               <Field
                 label="Password"
-                icon={<Lock size={18} />}
+                icon={<Lock size={17} />}
               >
                 <input
                   type="password"
                   placeholder="••••••••"
-                  className="h-[54px] w-full rounded-xl border border-white/10 bg-[#121212] px-4 text-white outline-none transition-all duration-300 focus:border-[#f2c06b] focus:bg-black/40"
+                  className="h-[52px] w-full rounded-xl border border-white/10 bg-[#121212] px-4 text-[14px] text-white outline-none transition-all duration-300 focus:border-[#f2c06b] focus:bg-black/40 md:h-[54px] md:text-[15px]"
                 />
               </Field>
 
               <button
                 type="button"
-                className="cursor-pointer text-[14px] font-black text-[#25b99a] transition hover:text-[#f2c06b]"
+                className="cursor-pointer touch-manipulation text-[13px] font-black text-[#25b99a] transition hover:text-[#f2c06b] active:text-[#f2c06b] md:text-[14px]"
               >
                 Forgot password?
               </button>
 
               <button
                 type="submit"
-                className="h-[58px] w-full cursor-pointer rounded-xl bg-[#25d0bd] text-[15px] font-black text-white shadow-[0_0_24px_rgba(37,208,189,0.28)] transition-all duration-300 active:scale-95 hover:scale-[1.02] hover:shadow-[0_0_34px_rgba(37,208,189,0.48)]"
+                className="h-[54px] w-full touch-manipulation rounded-xl bg-[#25d0bd] text-[14px] font-black text-white shadow-[0_0_24px_rgba(37,208,189,0.28)] transition-all duration-300 active:scale-95 hover:scale-[1.02] hover:shadow-[0_0_34px_rgba(37,208,189,0.48)] md:h-[58px] md:text-[15px]"
               >
                 Sign In
               </button>
@@ -161,47 +161,47 @@ export default function AuthPage() {
             <form className="space-y-5">
               <Field
                 label="Full Name *"
-                icon={<User size={18} />}
+                icon={<User size={17} />}
               >
                 <input
                   required
                   type="text"
                   placeholder="John Doe"
-                  className="h-[54px] w-full rounded-xl border border-white/10 bg-[#121212] px-4 text-white outline-none transition-all duration-300 focus:border-[#f2c06b] focus:bg-black/40"
+                  className="h-[52px] w-full rounded-xl border border-white/10 bg-[#121212] px-4 text-[14px] text-white outline-none transition-all duration-300 focus:border-[#f2c06b] focus:bg-black/40 md:h-[54px] md:text-[15px]"
                 />
               </Field>
 
               <Field
                 label="Email *"
-                icon={<Mail size={18} />}
+                icon={<Mail size={17} />}
               >
                 <input
                   required
                   type="email"
                   placeholder="your@email.com"
-                  className="h-[54px] w-full rounded-xl border border-white/10 bg-[#121212] px-4 text-white outline-none transition-all duration-300 focus:border-[#f2c06b] focus:bg-black/40"
+                  className="h-[52px] w-full rounded-xl border border-white/10 bg-[#121212] px-4 text-[14px] text-white outline-none transition-all duration-300 focus:border-[#f2c06b] focus:bg-black/40 md:h-[54px] md:text-[15px]"
                 />
               </Field>
 
               <Field
                 label="Phone Number *"
-                icon={<Phone size={18} />}
+                icon={<Phone size={17} />}
               >
                 <input
                   required
                   type="tel"
                   placeholder="(123) 456-7890"
-                  className="h-[54px] w-full rounded-xl border border-white/10 bg-[#121212] px-4 text-white outline-none transition-all duration-300 focus:border-[#f2c06b] focus:bg-black/40"
+                  className="h-[52px] w-full rounded-xl border border-white/10 bg-[#121212] px-4 text-[14px] text-white outline-none transition-all duration-300 focus:border-[#f2c06b] focus:bg-black/40 md:h-[54px] md:text-[15px]"
                 />
 
-                <p className="mt-2 text-[13px] font-semibold text-white/65">
+                <p className="mt-2 text-[12px] font-semibold leading-[1.5] text-white/65 md:text-[13px]">
                   Required for booking confirmations
                 </p>
               </Field>
 
               <Field
                 label="Password *"
-                icon={<Lock size={18} />}
+                icon={<Lock size={17} />}
               >
                 <input
                   required
@@ -211,7 +211,7 @@ export default function AuthPage() {
                   }
                   type="password"
                   placeholder="••••••••"
-                  className="h-[54px] w-full rounded-xl border border-white/10 bg-[#121212] px-4 text-white outline-none transition-all duration-300 focus:border-[#f2c06b] focus:bg-black/40"
+                  className="h-[52px] w-full rounded-xl border border-white/10 bg-[#121212] px-4 text-[14px] text-white outline-none transition-all duration-300 focus:border-[#f2c06b] focus:bg-black/40 md:h-[54px] md:text-[15px]"
                 />
 
                 <div className="mt-3 h-[7px] overflow-hidden rounded-full bg-white/10">
@@ -220,7 +220,7 @@ export default function AuthPage() {
                   />
                 </div>
 
-                <div className="mt-4 grid grid-cols-1 gap-2 text-[13px] font-semibold sm:grid-cols-2">
+                <div className="mt-4 grid grid-cols-1 gap-2 text-[12px] font-semibold sm:grid-cols-2 md:text-[13px]">
                   <CheckLine
                     ok={checks.length}
                     text="6+ characters"
@@ -245,7 +245,7 @@ export default function AuthPage() {
 
               <button
                 type="submit"
-                className="h-[58px] w-full cursor-pointer rounded-xl bg-[#f2c06b] text-[15px] font-black text-white shadow-[0_0_24px_rgba(242,192,107,0.22)] transition-all duration-300 active:scale-95 hover:scale-[1.02] hover:shadow-[0_0_34px_rgba(242,192,107,0.48)]"
+                className="h-[54px] w-full touch-manipulation rounded-xl bg-[#f2c06b] text-[14px] font-black text-white shadow-[0_0_24px_rgba(242,192,107,0.22)] transition-all duration-300 active:scale-95 hover:scale-[1.02] hover:shadow-[0_0_34px_rgba(242,192,107,0.48)] md:h-[58px] md:text-[15px]"
               >
                 Create Account
               </button>
@@ -254,7 +254,7 @@ export default function AuthPage() {
 
           <a
             href="/"
-            className="mt-8 block text-center text-[15px] font-black text-white transition hover:text-[#f2c06b]"
+            className="mt-7 block touch-manipulation text-center text-[14px] font-black text-white transition hover:text-[#f2c06b] active:text-[#f2c06b] md:mt-8 md:text-[15px]"
           >
             Back to Home
           </a>
@@ -275,7 +275,7 @@ function Field({
 }) {
   return (
     <div>
-      <label className="mb-3 flex items-center gap-2 text-[15px] font-black">
+      <label className="mb-3 flex items-center gap-2 text-[14px] font-black md:text-[15px]">
         <span className="text-[#25b99a]">{icon}</span>
         {label}
       </label>
