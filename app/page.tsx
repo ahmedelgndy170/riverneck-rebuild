@@ -314,7 +314,7 @@ export default function Home() {
           <div className="mx-auto mt-10 grid w-full max-w-[1120px] grid-cols-1 gap-4 px-2 md:flex md:flex-wrap md:items-center md:justify-center lg:flex-nowrap">
             <Link
               href="/sign-waiver"
-              className="group flex h-[78px] w-full animate-pulse items-center justify-center gap-3 rounded-2xl bg-[#d72f45] px-6 text-white shadow-[0_0_32px_rgba(215,47,69,0.55)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#ee3b55] hover:shadow-[0_0_42px_rgba(238,59,85,0.8)] md:min-w-[250px] md:w-auto"
+              className="group flex h-[78px] w-full animate-pulse items-center justify-center gap-3 rounded-2xl bg-[#d72f45] px-6 text-white shadow-[0_0_32px_rgba(215,47,69,0.55)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#ee3b55] hover:shadow-[0_0_42px_rgba(238,59,85,0.8)] md:w-auto md:min-w-[250px]"
             >
               <PenLine size={24} className="shrink-0" />
 
@@ -330,7 +330,7 @@ export default function Home() {
                   .getElementById("epic-trails")
                   ?.scrollIntoView({ behavior: "smooth", block: "start" });
               }}
-              className="group flex h-[78px] w-full cursor-pointer items-center justify-center gap-3 rounded-2xl bg-white px-6 text-[#5d8f86] shadow-[0_18px_35px_rgba(255,255,255,0.18)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_34px_rgba(255,255,255,0.55)] md:min-w-[250px] md:w-auto"
+              className="group flex h-[78px] w-full cursor-pointer items-center justify-center gap-3 rounded-2xl bg-white px-6 text-[#5d8f86] shadow-[0_18px_35px_rgba(255,255,255,0.18)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_34px_rgba(255,255,255,0.55)] md:w-auto md:min-w-[250px]"
             >
               <span className="whitespace-nowrap text-[19px] font-black tracking-[-0.02em]">
                 Explore Trails
@@ -343,7 +343,7 @@ export default function Home() {
 
             <Link
               href="/purchase"
-              className="group flex h-[78px] w-full items-center justify-center gap-3 rounded-2xl bg-[#f6c35f] px-6 text-[#241507] shadow-[0_18px_35px_rgba(246,195,95,0.28)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#ffd37a] hover:shadow-[0_0_34px_rgba(246,195,95,0.65)] md:min-w-[250px] md:w-auto"
+              className="group flex h-[78px] w-full items-center justify-center gap-3 rounded-2xl bg-[#f6c35f] px-6 text-[#241507] shadow-[0_18px_35px_rgba(246,195,95,0.28)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#ffd37a] hover:shadow-[0_0_34px_rgba(246,195,95,0.65)] md:w-auto md:min-w-[250px]"
             >
               <span className="whitespace-nowrap text-[19px] font-black tracking-[-0.02em]">
                 Plan Your Ride
@@ -361,7 +361,7 @@ export default function Home() {
                   .getElementById("stay-play")
                   ?.scrollIntoView({ behavior: "smooth", block: "start" });
               }}
-              className="group flex h-[78px] w-full cursor-pointer items-center justify-center gap-3 rounded-2xl border border-white/40 bg-black/20 px-6 text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-white/80 hover:bg-white/10 hover:shadow-[0_0_34px_rgba(255,255,255,0.35)] md:min-w-[250px] md:w-auto"
+              className="group flex h-[78px] w-full cursor-pointer items-center justify-center gap-3 rounded-2xl border border-white/40 bg-black/20 px-6 text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-white/80 hover:bg-white/10 hover:shadow-[0_0_34px_rgba(255,255,255,0.35)] md:w-auto md:min-w-[250px]"
             >
               <span className="whitespace-nowrap text-[19px] font-black tracking-[-0.02em]">
                 Plan Your Weekend
@@ -376,7 +376,7 @@ export default function Home() {
 
         <a
           href="#summer"
-          className="absolute bottom-7 left-1/2 z-10 -translate-x-1/2 animate-bounce text-white"
+          className="absolute bottom-7 left-1/2 z-10 hidden -translate-x-1/2 animate-bounce text-white md:block"
         >
           <Mouse size={36} strokeWidth={1.8} />
         </a>
@@ -590,7 +590,10 @@ export default function Home() {
       </section>
 
       {/* EPIC TRAILS */}
-      <section id="epic-trails" className="scroll-mt-24 px-4 py-20 md:px-[6%] md:py-28">
+      <section
+        id="epic-trails"
+        className="relative scroll-mt-24 px-4 py-20 md:px-[6%] md:py-28"
+      >
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute top-10 left-1/2 h-[260px] w-[760px] -translate-x-1/2 rounded-full bg-[#f2b35f]/20 blur-[140px]" />
           <div className="absolute right-10 top-1/2 h-[360px] w-[360px] -translate-y-1/2 rounded-full bg-[#f2b35f]/10 blur-[120px]" />
@@ -636,7 +639,7 @@ export default function Home() {
                   >
                     <Icon
                       size={34}
-                      className="shrink-0 text-[#27b99d] transition-all duration-300 group-hover:scale-125 group-hover:text-[#f6c35f] md:size-[38px]"
+                      className="shrink-0 text-[#27b99d] transition-all duration-300 group-hover:scale-125 group-hover:text-[#f6c35f]"
                     />
 
                     <div>
