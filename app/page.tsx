@@ -420,7 +420,7 @@ export default function Home() {
     <div className="grid items-center gap-7 md:grid-cols-2 md:gap-14">
 <div className="relative min-h-[420px] overflow-hidden rounded-2xl md:min-h-[760px]">
   <Image
-    src="/summer-kickoff.jpg"
+    src="/summer-event.jpg"
     alt="Summer Kick Off"
     fill
     className="object-contain md:object-cover"
