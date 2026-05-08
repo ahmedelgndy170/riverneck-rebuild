@@ -23,7 +23,14 @@ import {
   QrCode,
 } from "lucide-react";
 import Image from "next/image";
-import TrailMap from "@/components/TrailMap";
+import dynamic from "next/dynamic";
+
+const TrailMap = dynamic(
+  () => import("@/components/TrailMap"),
+  {
+    ssr: false,
+  }
+);
 import StayPlaySection from "@/components/StayPlaySection";
 import EventsSection from "@/components/EventsSection";
 import PlanYourVisit from "@/components/PlanYourVisit";
@@ -706,32 +713,40 @@ export default function Home() {
         </div>
       </section>
 
-      {/* TRAIL MAP */}
-      <section className="bg-[#0b0b0b] px-4 py-16 text-white md:px-[8%] md:py-20">
-        <div className="mb-8 text-center md:mb-10">
-          <h2 className="text-[30px] font-black uppercase leading-none tracking-[-1px] text-white md:text-[46px]">
-            EXPLORE OUR TRAIL MAP
-          </h2>
+  {/* TRAIL MAP */}
+<section className="relative overflow-hidden bg-[#050705] px-3 py-12 text-white sm:px-4 md:px-[4%] md:py-16 lg:px-[6%]">
+  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,rgba(38,140,82,0.18),transparent_34%),radial-gradient(circle_at_85%_70%,rgba(210,166,61,0.10),transparent_32%),linear-gradient(180deg,#060906_0%,#070707_48%,#050705_100%)]" />
 
-          <p className="mx-auto mt-4 max-w-[620px] text-[15px] font-medium leading-[1.6] text-white/75 md:mt-5 md:text-[20px]">
-            Navigate 60+ miles of trails and plan your adventure
-          </p>
-        </div>
+  <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#36c978]/40 to-transparent" />
 
-        <TrailMap />
+  <div className="relative z-10 mx-auto w-full max-w-[1500px]">
+    <div className="mb-6 text-center md:mb-8">
+      <h2 className="text-[27px] font-black uppercase leading-none tracking-[-1px] text-white drop-shadow-[0_0_14px_rgba(47,191,113,0.18)] sm:text-[34px] md:text-[46px]">
+        EXPLORE OUR TRAIL MAP
+      </h2>
 
-        <div className="mx-auto mt-10 w-full max-w-[1180px] rounded-[18px] border border-white/[0.06] bg-[#101010]/80 px-5 py-8 text-center md:mt-12 md:px-8 md:py-[54px]">
-          <h2 className="mb-4 text-[22px] font-black uppercase leading-none tracking-[-0.5px] text-white md:text-[27px]">
-            ALL SKILL LEVELS WELCOME
-          </h2>
+      <p className="mx-auto mt-3 max-w-[620px] text-[14px] font-medium leading-[1.6] text-white/72 sm:text-[16px] md:mt-5 md:text-[20px]">
+        Navigate 60+ miles of trails and plan your adventure
+      </p>
+    </div>
 
-          <p className="mx-auto max-w-[720px] text-[14px] font-medium leading-[1.7] text-white/70 md:text-[18px]">
-            Whether you're a seasoned pro or just starting out, River Neck Acres
-            has the perfect trail for you. Our marked trail system ensures you
-            can find routes that match your experience and comfort level.
-          </p>
-        </div>
-      </section>
+    <div className="mx-auto w-full max-w-[1600px] scale-[1.03] md:scale-[1.05]">
+      <TrailMap />
+    </div>
+
+    <div className="mx-auto mt-8 w-full max-w-[1380px] rounded-[22px] border border-[#36c978]/18 bg-[linear-gradient(135deg,rgba(10,35,20,0.96),rgba(7,14,10,0.98)_58%,rgba(48,38,14,0.42))] px-4 py-7 text-center shadow-[0_0_30px_rgba(47,191,113,0.08),inset_0_0_28px_rgba(47,191,113,0.04)] backdrop-blur-sm md:mt-10 md:px-8 md:py-[48px]">
+      <h2 className="mb-4 text-[21px] font-black uppercase leading-none tracking-[-0.5px] text-[#effff5] drop-shadow-[0_0_12px_rgba(47,191,113,0.22)] md:text-[27px]">
+        ALL SKILL LEVELS WELCOME
+      </h2>
+
+      <p className="mx-auto max-w-[820px] text-[14px] font-medium leading-[1.7] text-white/74 md:text-[18px]">
+        Whether you're a seasoned pro or just starting out, River Neck Acres
+        has the perfect trail for you. Our marked trail system ensures you
+        can find routes that match your experience and comfort level.
+      </p>
+    </div>
+  </div>
+</section>
 
       <StayPlaySection />
       <EventsSection />
