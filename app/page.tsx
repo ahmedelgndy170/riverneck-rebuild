@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Home as HomeIcon,
@@ -22,15 +22,15 @@ import {
   Ticket,
   QrCode,
 } from "lucide-react";
-import Image from "next/image";
 import dynamic from "next/dynamic";
+import { supabase } from "@/lib/supabaseClient";
+import { useCart } from "@/context/CartContext";
+import { useUserRole } from "@/hooks/useUserRole";
 
-const TrailMap = dynamic(
-  () => import("@/components/TrailMap"),
-  {
-    ssr: false,
-  }
-);
+const TrailMap = dynamic(() => import("@/components/TrailMap"), {
+  ssr: false,
+});
+
 import StayPlaySection from "@/components/StayPlaySection";
 import EventsSection from "@/components/EventsSection";
 import PlanYourVisit from "@/components/PlanYourVisit";
@@ -69,16 +69,50 @@ function getParkStatus() {
 
 export default function Home() {
   const parkStatus = getParkStatus();
+  const { cartCount } = useCart();
+  const { canAccessAdmin } = useUserRole();
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [quickOpen, setQuickOpen] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      setUserEmail(user?.email ?? null);
+    };
+
+    getUser();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUserEmail(session?.user?.email ?? null);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setUserEmail(null);
+    setMobileMenuOpen(false);
+    setQuickOpen(false);
+    window.location.reload();
+  };
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-[#101010] text-white selection:bg-[#f2c06b] selection:text-black">
       {/* NAVBAR */}
       <nav className="fixed left-0 top-0 z-50 flex h-[68px] w-full items-center justify-between border-b border-white/10 bg-[#151515]/95 px-4 backdrop-blur-md md:h-[86px] md:px-[9%]">
-        <button
+        <Link
+          href="/"
           onClick={() => {
-            window.scrollTo({ top: 0, behavior: "smooth" });
             setMobileMenuOpen(false);
             setQuickOpen(false);
           }}
@@ -98,9 +132,9 @@ export default function Home() {
             RIVER NECK ACRES
             <span className="absolute -bottom-1 left-0 h-[2px] w-full scale-x-0 bg-[#25b99a] transition-transform duration-150 group-hover:scale-x-100" />
           </span>
-        </button>
+        </Link>
 
-        <div className="hidden items-center gap-9 text-[16px] font-bold lg:flex">
+        <div className="hidden items-center gap-8 text-[16px] font-bold lg:flex">
           <a href="/about" className="transition hover:text-[#25b99a]">
             About Us
           </a>
@@ -113,16 +147,7 @@ export default function Home() {
             Day Pass & More
           </a>
 
-          <a
-            href="#events"
-            onClick={(e) => {
-              e.preventDefault();
-              document
-                .getElementById("events")
-                ?.scrollIntoView({ behavior: "smooth" });
-            }}
-            className="cursor-pointer transition hover:text-[#25b99a]"
-          >
+          <a href="/#events" className="cursor-pointer transition hover:text-[#25b99a]">
             Events
           </a>
 
@@ -130,26 +155,59 @@ export default function Home() {
             Photos
           </a>
 
+          {canAccessAdmin && (
+            <Link
+              href="/admin"
+              className="rounded-xl border border-[#25b99a]/25 bg-[#25b99a]/10 px-4 py-2 text-[14px] font-black text-[#25d0bd] transition hover:bg-[#25b99a] hover:text-black active:scale-95"
+            >
+              Admin Dashboard
+            </Link>
+          )}
+
           <Link
             href="/cart"
-            className="text-white transition hover:text-[#25b99a]"
+            className="relative text-white transition hover:text-[#25b99a]"
           >
             <ShoppingCart size={20} strokeWidth={2.2} />
+
+            {cartCount > 0 && (
+              <span className="absolute -right-3 -top-3 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#f2c06b] px-1 text-[11px] font-black text-black">
+                {cartCount}
+              </span>
+            )}
           </Link>
 
-          <a
-            href="/auth"
-            className="rounded-xl px-4 py-2 font-bold transition duration-200 hover:scale-105 hover:bg-[#f2c06b] hover:text-black"
-          >
-            Sign In
-          </a>
+          {userEmail ? (
+            <div className="flex items-center gap-4">
+              <div className="max-w-[180px] truncate rounded-xl border border-[#25b99a]/20 bg-[#25b99a]/10 px-4 py-2 text-[14px] font-black text-[#25b99a]">
+                {userEmail}
+              </div>
 
-          <a
-            href="/auth"
-            className="rounded-xl bg-[#d5965c] px-6 py-3 font-bold text-black transition hover:opacity-90"
-          >
-            Log in
-          </a>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="rounded-xl bg-red-500 px-5 py-2 font-bold text-white transition-all duration-300 hover:scale-105 hover:bg-red-600 active:scale-95"
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <>
+              <Link
+                href="/auth"
+                className="rounded-xl px-4 py-2 font-bold transition duration-200 hover:scale-105 hover:bg-[#f2c06b] hover:text-black"
+              >
+                Sign In
+              </Link>
+
+              <Link
+                href="/auth"
+                className="rounded-xl bg-[#d5965c] px-6 py-3 font-bold text-black transition hover:opacity-90 active:scale-95"
+              >
+                Log in
+              </Link>
+            </>
+          )}
         </div>
 
         <button
@@ -166,12 +224,31 @@ export default function Home() {
       {mobileMenuOpen && (
         <div className="fixed left-0 top-[68px] z-40 w-full border-b border-white/10 bg-[#15100d]/98 px-5 py-5 shadow-2xl backdrop-blur-md lg:hidden">
           <div className="flex flex-col gap-3 text-[17px] font-extrabold text-white">
+            {userEmail && (
+              <div className="mb-1 rounded-2xl border border-[#25b99a]/25 bg-[#25b99a]/10 px-5 py-4">
+                <p className="text-[12px] font-black uppercase tracking-[0.18em] text-white/50">
+                  Signed in
+                </p>
+
+                <p className="mt-1 truncate text-[14px] font-black text-[#25b99a]">
+                  {userEmail}
+                </p>
+              </div>
+            )}
+
             {[
               { label: "About Us", href: "/about" },
               { label: "Accommodations", href: "/#stay-play" },
               { label: "Purchase", href: "/purchase" },
+              { label: "Events", href: "/#events" },
               { label: "Photos", href: "/photos" },
-              { label: "Cart", href: "/cart" },
+              ...(canAccessAdmin
+                ? [{ label: "Admin Dashboard", href: "/admin" }]
+                : []),
+              {
+                label: `Cart${cartCount > 0 ? ` (${cartCount})` : ""}`,
+                href: "/cart",
+              },
             ].map((item) => (
               <a
                 key={item.label}
@@ -183,27 +260,33 @@ export default function Home() {
               </a>
             ))}
 
-            <a
-              href="#events"
-              onClick={(e) => {
-                e.preventDefault();
-                setMobileMenuOpen(false);
-                document
-                  .getElementById("events")
-                  ?.scrollIntoView({ behavior: "smooth" });
-              }}
-              className="rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-4 transition active:scale-[0.98] active:border-[#f2c06b] active:bg-[#f2c06b]/15"
-            >
-              Events
-            </a>
+            {userEmail ? (
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="mt-2 rounded-2xl bg-red-500 py-4 text-center text-[18px] font-black text-white transition active:scale-[0.97]"
+              >
+                Logout
+              </button>
+            ) : (
+              <div className="mt-2 grid grid-cols-2 gap-3">
+                <a
+                  href="/auth"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="rounded-2xl border border-white/10 bg-white/[0.05] py-4 text-center text-[16px] font-black text-white transition active:scale-[0.97]"
+                >
+                  Sign In
+                </a>
 
-            <a
-              href="/auth"
-              onClick={() => setMobileMenuOpen(false)}
-              className="mt-2 rounded-2xl bg-[#d89b2b] py-4 text-center text-[18px] font-black text-black transition active:scale-[0.97]"
-            >
-              Log in
-            </a>
+                <a
+                  href="/auth"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="rounded-2xl bg-[#d89b2b] py-4 text-center text-[16px] font-black text-black transition active:scale-[0.97]"
+                >
+                  Log in
+                </a>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -217,10 +300,17 @@ export default function Home() {
               className="flex touch-manipulation items-center gap-2 transition active:scale-95"
             >
               <span className="rounded-full bg-black/90 px-3 py-2 text-[13px] font-bold text-white shadow-xl">
-                Cart
+                Cart{cartCount > 0 ? ` (${cartCount})` : ""}
               </span>
-              <span className="flex h-13 w-13 items-center justify-center rounded-full bg-purple-600 text-white shadow-xl">
+
+              <span className="relative flex h-13 w-13 items-center justify-center rounded-full bg-purple-600 text-white shadow-xl">
                 <ShoppingCart size={23} />
+
+                {cartCount > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#f2c06b] px-1 text-[11px] font-black text-black">
+                    {cartCount}
+                  </span>
+                )}
               </span>
             </Link>
 
@@ -231,12 +321,29 @@ export default function Home() {
               <span className="rounded-full bg-black/90 px-3 py-2 text-[13px] font-bold text-white shadow-xl">
                 Day Pass
               </span>
+
               <span className="flex h-13 w-13 items-center justify-center rounded-full bg-green-600 text-white shadow-xl">
                 <Ticket size={23} />
               </span>
             </Link>
 
+            {canAccessAdmin && (
+              <Link
+                href="/admin"
+                className="flex touch-manipulation items-center gap-2 transition active:scale-95"
+              >
+                <span className="rounded-full bg-black/90 px-3 py-2 text-[13px] font-bold text-white shadow-xl">
+                  Admin
+                </span>
+
+                <span className="flex h-13 w-13 items-center justify-center rounded-full bg-[#25b99a] text-black shadow-xl">
+                 <QrCode size={23} />
+                </span>
+              </Link>
+            )}
+
             <button
+              type="button"
               onClick={() => {
                 setQuickOpen(false);
                 document
@@ -248,6 +355,7 @@ export default function Home() {
               <span className="rounded-full bg-black/90 px-3 py-2 text-[13px] font-bold text-white shadow-xl">
                 Book Stay
               </span>
+
               <span className="flex h-13 w-13 items-center justify-center rounded-full bg-[#3c9677] text-white shadow-xl">
                 <HomeIcon size={23} />
               </span>
@@ -260,6 +368,7 @@ export default function Home() {
               <span className="rounded-full bg-black/90 px-3 py-2 text-[13px] font-bold text-white shadow-xl">
                 Waiver QR
               </span>
+
               <span className="flex h-13 w-13 items-center justify-center rounded-full bg-orange-600 text-white shadow-xl">
                 <QrCode size={23} />
               </span>
@@ -268,6 +377,7 @@ export default function Home() {
         )}
 
         <button
+          type="button"
           onClick={() => setQuickOpen(!quickOpen)}
           className="flex h-16 w-16 cursor-pointer touch-manipulation items-center justify-center rounded-full bg-[#3c9677] text-[34px] leading-none text-white shadow-[0_18px_45px_rgba(0,0,0,0.45)] transition hover:scale-105 active:scale-90 active:bg-[#f2c06b] active:text-black md:h-20 md:w-20 md:text-[42px]"
           aria-label="Open quick actions"
@@ -275,6 +385,8 @@ export default function Home() {
           {quickOpen ? "×" : "+"}
         </button>
       </div>
+
+      {/* HERO */}
 
       {/* HERO */}
       <section className="relative flex min-h-screen items-center justify-center overflow-hidden pt-[68px] text-center md:pt-[86px]">
@@ -400,239 +512,241 @@ export default function Home() {
           <Mouse size={36} strokeWidth={1.8} />
         </a>
       </section>
-{/* SUMMER EVENT */}
-<section
-  id="summer"
-  className="relative scroll-mt-24 overflow-hidden px-4 py-16 text-white md:px-[9%] md:py-28"
->
-  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_12%,rgba(29,109,84,0.32),transparent_34%),radial-gradient(circle_at_85%_8%,rgba(246,195,95,0.18),transparent_32%),radial-gradient(circle_at_50%_100%,rgba(29,109,84,0.20),transparent_38%),linear-gradient(180deg,#101312_0%,#1b1712_50%,#0b1110_100%)]" />
 
-  <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.022)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.022)_1px,transparent_1px)] bg-[size:48px_48px] opacity-25" />
+      {/* SUMMER EVENT */}
+      <section
+        id="summer"
+        className="relative scroll-mt-24 overflow-hidden px-4 py-16 text-white md:px-[9%] md:py-28"
+      >
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_12%,rgba(29,109,84,0.32),transparent_34%),radial-gradient(circle_at_85%_8%,rgba(246,195,95,0.18),transparent_32%),radial-gradient(circle_at_50%_100%,rgba(29,109,84,0.20),transparent_38%),linear-gradient(180deg,#101312_0%,#1b1712_50%,#0b1110_100%)]" />
 
-  <div className="relative z-10">
-    <div className="mb-10 text-center md:mb-16">
-      <div className="mb-4 inline-block rounded-full bg-[#f2c35f] px-4 py-1 text-[12px] font-black text-black shadow-[0_0_28px_rgba(246,195,95,0.35)] md:px-5 md:text-sm">
-        May 11-17, 2026
-      </div>
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.022)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.022)_1px,transparent_1px)] bg-[size:48px_48px] opacity-25" />
 
-      <h2 className="text-[30px] font-black uppercase leading-none tracking-[-1px] text-[#f2c35f] drop-shadow-[0_0_22px_rgba(246,195,95,0.22)] md:text-[48px]">
-        SUMMER KICK OFF
-      </h2>
+        <div className="relative z-10">
+          <div className="mb-10 text-center md:mb-16">
+            <div className="mb-4 inline-block rounded-full bg-[#f2c35f] px-4 py-1 text-[12px] font-black text-black shadow-[0_0_28px_rgba(246,195,95,0.35)] md:px-5 md:text-sm">
+              May 11-17, 2026
+            </div>
 
-      <p className="mx-auto mt-3 max-w-[520px] text-[15px] font-bold leading-[1.6] text-white/75 md:text-lg">
-        A Week of Riding, Music & Campground Fun!
-      </p>
-    </div>
+            <h2 className="text-[30px] font-black uppercase leading-none tracking-[-1px] text-[#f2c35f] drop-shadow-[0_0_22px_rgba(246,195,95,0.22)] md:text-[48px]">
+              SUMMER KICK OFF
+            </h2>
 
-    <div className="grid items-center gap-7 md:grid-cols-2 md:gap-14">
-<div className="flex w-full items-center justify-center overflow-hidden rounded-2xl bg-black/25 shadow-[0_30px_90px_rgba(0,0,0,0.55)] md:min-h-[760px]">
-  <img
-    src="/summer-event.jpg"
-    alt="Summer Kick Off"
-    className="h-auto w-full object-contain"
-  />
-</div>
-
-      <div className="space-y-5 md:space-y-6 md:pt-20">
-        <div className="touch-manipulation rounded-2xl border border-white/10 bg-white/[0.05] p-5 shadow-[0_18px_55px_rgba(0,0,0,0.28)] backdrop-blur-md transition active:scale-[0.98] active:border-[#f2c06b] md:p-6">
-          <h3 className="mb-3 flex items-center gap-2 text-[17px] font-bold md:text-lg">
-            🎵 Concert & Events
-          </h3>
-          <p className="text-[13px] leading-[1.7] text-white/75 md:text-sm">
-            Saturday, May 16 — Activities and music all day. Night ride
-            starts 11:30 PM.
-          </p>
-        </div>
-
-        <div className="touch-manipulation rounded-2xl border border-white/10 bg-white/[0.05] p-5 shadow-[0_18px_55px_rgba(0,0,0,0.28)] backdrop-blur-md transition active:scale-[0.98] active:border-[#f2c06b] md:p-6">
-          <h3 className="mb-5 flex items-center gap-2 text-[17px] font-bold md:text-lg">
-            🎟️ Ticket Pricing
-          </h3>
-
-          <div className="grid grid-cols-2 gap-3 text-center md:gap-4">
-            {[
-              { price: "$10", label: "Children" },
-              { price: "$25", label: "Concert Only" },
-              { price: "$75", label: "Weekend" },
-              { price: "$100", label: "All Week Pass" },
-            ].map((ticket) => (
-              <div
-                key={ticket.label}
-                className="rounded-xl bg-black/25 p-4 transition active:scale-95 active:bg-[#f2c35f]/15 md:p-5"
-              >
-                <div className="text-[18px] font-black md:text-xl">
-                  {ticket.price}
-                </div>
-                <div className="text-[12px] text-white/60 md:text-sm">
-                  {ticket.label}
-                </div>
-              </div>
-            ))}
+            <p className="mx-auto mt-3 max-w-[520px] text-[15px] font-bold leading-[1.6] text-white/75 md:text-lg">
+              A Week of Riding, Music & Campground Fun!
+            </p>
           </div>
 
-          <p className="mt-4 text-[11px] leading-[1.6] text-white/50 md:text-xs">
-            Card payments incur a 5% fee. Memberships & gift cards not
-            accepted.
-          </p>
-        </div>
+          <div className="grid items-center gap-7 md:grid-cols-2 md:gap-14">
+            <div className="flex w-full items-center justify-center overflow-hidden rounded-2xl bg-black/25 shadow-[0_30px_90px_rgba(0,0,0,0.55)] md:min-h-[760px]">
+              <img
+                src="/summer-event.jpg"
+                alt="Summer Kick Off"
+                className="h-auto w-full object-contain"
+              />
+            </div>
 
-        <div className="touch-manipulation rounded-2xl border border-white/10 bg-white/[0.05] p-5 shadow-[0_18px_55px_rgba(0,0,0,0.28)] backdrop-blur-md transition active:scale-[0.98] active:border-[#f2c06b] md:p-6">
-          <h3 className="mb-2 text-[17px] font-bold md:text-lg">
-            📍 Reservations
-          </h3>
-          <p className="text-[13px] text-white/75 md:text-sm">
-            Call 843-333-4607 for reservations
-          </p>
-        </div>
-
-        <div className="flex justify-center">
-          <a
-            href="/purchase"
-            className="inline-flex h-[58px] min-w-[260px] touch-manipulation items-center justify-center rounded-xl bg-[#f2c35f] px-10 text-center text-[17px] font-black text-black shadow-[0_0_36px_rgba(246,195,95,0.42)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#ffd27a] hover:shadow-[0_0_48px_rgba(246,195,95,0.65)] active:scale-95 active:bg-[#ffd27a]"
-          >
-            Buy Tickets →
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-    {/* MEMBERSHIP SECTION */}
-<section
-  id="annual-membership"
-  className="relative overflow-hidden px-4 py-16 text-white md:px-[8%] md:py-28"
->
-  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(29,109,84,0.30),transparent_32%),radial-gradient(circle_at_82%_12%,rgba(246,195,95,0.18),transparent_30%),linear-gradient(180deg,#101312_0%,#1b1712_52%,#0b1110_100%)]" />
-
-  <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.022)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.022)_1px,transparent_1px)] bg-[size:48px_48px] opacity-20" />
-
-  <div className="relative z-10">
-    <div className="mb-9 text-center md:mb-10">
-      <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-[#3a2618] px-4 py-2 text-[13px] font-bold text-[#f2b35f] shadow-[0_0_24px_rgba(242,179,95,0.25)] md:text-[14px]">
-        <Crown size={16} />
-        Best Value
-      </div>
-
-      <h2 className="text-[30px] font-black uppercase leading-none tracking-[-1px] text-white md:text-[42px]">
-        ANNUAL MEMBERSHIP
-      </h2>
-
-      <p className="mx-auto mt-4 max-w-[680px] text-[15px] font-medium leading-[1.6] text-white/85 md:mt-5 md:text-[20px]">
-        Get unlimited year-round access to all trails and dry camping
-      </p>
-    </div>
-
-    <div className="mx-auto max-w-[1120px] overflow-hidden rounded-[20px] border border-[#f2b35f]/25 bg-[#111111]/80 shadow-[0_35px_100px_rgba(0,0,0,0.55)] backdrop-blur-md">
-      <div className="bg-[#6b4a34]/95 px-5 py-9 text-center md:px-8 md:py-12">
-        <div className="text-[44px] font-black leading-none text-white md:text-[64px]">
-          $500{" "}
-          <span className="text-[20px] font-medium md:text-[24px]">
-            /year
-          </span>
-        </div>
-
-        <p className="mx-auto mt-4 max-w-[720px] text-[14px] font-bold leading-[1.6] text-white md:text-[15px]">
-          Base package: 2 people, 1 machine{" "}
-          <span className="font-normal text-white/80">
-            (includes dry camping)
-          </span>
-        </p>
-
-        <p className="mt-2 text-[12px] leading-[1.6] text-white/75 md:text-[13px]">
-          Note: Does not include the four major annual events
-        </p>
-      </div>
-
-      <div className="bg-[#111111]/90 px-4 py-7 md:px-10 md:py-10">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-4 md:gap-6">
-          {[
-            {
-              icon: <Calendar size={28} />,
-              title: "Unlimited Access",
-              text: "Ride any day for an entire year",
-            },
-            {
-              icon: <Tent size={28} />,
-              title: "Dry Camping",
-              text: "Camp for free whenever you visit",
-            },
-            {
-              icon: <Bike size={28} />,
-              title: "All Trails",
-              text: "60+ miles of off-road terrain",
-            },
-            {
-              icon: <Users size={28} />,
-              title: "Bring Friends",
-              text: "Includes 2 people & 1 machine",
-            },
-          ].map((item) => (
-            <div
-              key={item.title}
-              className="group touch-manipulation rounded-[18px] border border-white/10 bg-[#3f332f] p-5 text-center transition-all duration-300 hover:-translate-y-2 hover:border-[#f2b35f]/60 hover:bg-[#5a463c] hover:shadow-[0_0_35px_rgba(242,179,95,0.35)] active:scale-[0.97] active:border-[#f2b35f]/60 active:bg-[#5a463c] md:p-7"
-            >
-              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#f2b35f]/75 text-white transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 group-hover:bg-[#f2b35f] group-active:scale-110 group-active:rotate-6 md:mb-5 md:h-16 md:w-16">
-                {item.icon}
+            <div className="space-y-5 md:space-y-6 md:pt-20">
+              <div className="touch-manipulation rounded-2xl border border-white/10 bg-white/[0.05] p-5 shadow-[0_18px_55px_rgba(0,0,0,0.28)] backdrop-blur-md transition active:scale-[0.98] active:border-[#f2c06b] md:p-6">
+                <h3 className="mb-3 flex items-center gap-2 text-[17px] font-bold md:text-lg">
+                  🎵 Concert & Events
+                </h3>
+                <p className="text-[13px] leading-[1.7] text-white/75 md:text-sm">
+                  Saturday, May 16 — Activities and music all day. Night ride
+                  starts 11:30 PM.
+                </p>
               </div>
 
-              <h3 className="text-[18px] font-black text-white md:text-[20px]">
-                {item.title}
-              </h3>
+              <div className="touch-manipulation rounded-2xl border border-white/10 bg-white/[0.05] p-5 shadow-[0_18px_55px_rgba(0,0,0,0.28)] backdrop-blur-md transition active:scale-[0.98] active:border-[#f2c06b] md:p-6">
+                <h3 className="mb-5 flex items-center gap-2 text-[17px] font-bold md:text-lg">
+                  🎟️ Ticket Pricing
+                </h3>
 
-              <p className="mt-2 text-[14px] leading-[1.55] text-white/80 md:text-[16px]">
-                {item.text}
+                <div className="grid grid-cols-2 gap-3 text-center md:gap-4">
+                  {[
+                    { price: "$10", label: "Children" },
+                    { price: "$25", label: "Concert Only" },
+                    { price: "$75", label: "Weekend" },
+                    { price: "$100", label: "All Week Pass" },
+                  ].map((ticket) => (
+                    <div
+                      key={ticket.label}
+                      className="rounded-xl bg-black/25 p-4 transition active:scale-95 active:bg-[#f2c35f]/15 md:p-5"
+                    >
+                      <div className="text-[18px] font-black md:text-xl">
+                        {ticket.price}
+                      </div>
+                      <div className="text-[12px] text-white/60 md:text-sm">
+                        {ticket.label}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <p className="mt-4 text-[11px] leading-[1.6] text-white/50 md:text-xs">
+                  Card payments incur a 5% fee. Memberships & gift cards not
+                  accepted.
+                </p>
+              </div>
+
+              <div className="touch-manipulation rounded-2xl border border-white/10 bg-white/[0.05] p-5 shadow-[0_18px_55px_rgba(0,0,0,0.28)] backdrop-blur-md transition active:scale-[0.98] active:border-[#f2c06b] md:p-6">
+                <h3 className="mb-2 text-[17px] font-bold md:text-lg">
+                  📍 Reservations
+                </h3>
+                <p className="text-[13px] text-white/75 md:text-sm">
+                  Call 843-333-4607 for reservations
+                </p>
+              </div>
+
+              <div className="flex justify-center">
+                <a
+                  href="/purchase"
+                  className="inline-flex h-[58px] min-w-[260px] touch-manipulation items-center justify-center rounded-xl bg-[#f2c35f] px-10 text-center text-[17px] font-black text-black shadow-[0_0_36px_rgba(246,195,95,0.42)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#ffd27a] hover:shadow-[0_0_48px_rgba(246,195,95,0.65)] active:scale-95 active:bg-[#ffd27a]"
+                >
+                  Buy Tickets →
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* MEMBERSHIP SECTION */}
+      <section
+        id="annual-membership"
+        className="relative overflow-hidden px-4 py-16 text-white md:px-[8%] md:py-28"
+      >
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(29,109,84,0.30),transparent_32%),radial-gradient(circle_at_82%_12%,rgba(246,195,95,0.18),transparent_30%),linear-gradient(180deg,#101312_0%,#1b1712_52%,#0b1110_100%)]" />
+
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.022)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.022)_1px,transparent_1px)] bg-[size:48px_48px] opacity-20" />
+
+        <div className="relative z-10">
+          <div className="mb-9 text-center md:mb-10">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-[#3a2618] px-4 py-2 text-[13px] font-bold text-[#f2b35f] shadow-[0_0_24px_rgba(242,179,95,0.25)] md:text-[14px]">
+              <Crown size={16} />
+              Best Value
+            </div>
+
+            <h2 className="text-[30px] font-black uppercase leading-none tracking-[-1px] text-white md:text-[42px]">
+              ANNUAL MEMBERSHIP
+            </h2>
+
+            <p className="mx-auto mt-4 max-w-[680px] text-[15px] font-medium leading-[1.6] text-white/85 md:mt-5 md:text-[20px]">
+              Get unlimited year-round access to all trails and dry camping
+            </p>
+          </div>
+
+          <div className="mx-auto max-w-[1120px] overflow-hidden rounded-[20px] border border-[#f2b35f]/25 bg-[#111111]/80 shadow-[0_35px_100px_rgba(0,0,0,0.55)] backdrop-blur-md">
+            <div className="bg-[#6b4a34]/95 px-5 py-9 text-center md:px-8 md:py-12">
+              <div className="text-[44px] font-black leading-none text-white md:text-[64px]">
+                $500{" "}
+                <span className="text-[20px] font-medium md:text-[24px]">
+                  /year
+                </span>
+              </div>
+
+              <p className="mx-auto mt-4 max-w-[720px] text-[14px] font-bold leading-[1.6] text-white md:text-[15px]">
+                Base package: 2 people, 1 machine{" "}
+                <span className="font-normal text-white/80">
+                  (includes dry camping)
+                </span>
+              </p>
+
+              <p className="mt-2 text-[12px] leading-[1.6] text-white/75 md:text-[13px]">
+                Note: Does not include the four major annual events
               </p>
             </div>
-          ))}
+
+            <div className="bg-[#111111]/90 px-4 py-7 md:px-10 md:py-10">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-4 md:gap-6">
+                {[
+                  {
+                    icon: <Calendar size={28} />,
+                    title: "Unlimited Access",
+                    text: "Ride any day for an entire year",
+                  },
+                  {
+                    icon: <Tent size={28} />,
+                    title: "Dry Camping",
+                    text: "Camp for free whenever you visit",
+                  },
+                  {
+                    icon: <Bike size={28} />,
+                    title: "All Trails",
+                    text: "60+ miles of off-road terrain",
+                  },
+                  {
+                    icon: <Users size={28} />,
+                    title: "Bring Friends",
+                    text: "Includes 2 people & 1 machine",
+                  },
+                ].map((item) => (
+                  <div
+                    key={item.title}
+                    className="group touch-manipulation rounded-[18px] border border-white/10 bg-[#3f332f] p-5 text-center transition-all duration-300 hover:-translate-y-2 hover:border-[#f2b35f]/60 hover:bg-[#5a463c] hover:shadow-[0_0_35px_rgba(242,179,95,0.35)] active:scale-[0.97] active:border-[#f2b35f]/60 active:bg-[#5a463c] md:p-7"
+                  >
+                    <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#f2b35f]/75 text-white transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 group-hover:bg-[#f2b35f] group-active:scale-110 group-active:rotate-6 md:mb-5 md:h-16 md:w-16">
+                      {item.icon}
+                    </div>
+
+                    <h3 className="text-[18px] font-black text-white md:text-[20px]">
+                      {item.title}
+                    </h3>
+
+                    <p className="mt-2 text-[14px] leading-[1.55] text-white/80 md:text-[16px]">
+                      {item.text}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-7 rounded-[14px] border border-white/10 bg-[#171717]/90 px-5 py-5 md:mt-8 md:px-8 md:py-6">
+                <h3 className="mb-3 flex items-center gap-2 text-[16px] font-black text-white md:text-[18px]">
+                  <Sparkles size={20} className="shrink-0 text-[#f2b35f]" />
+                  Add More Riders & Machines
+                </h3>
+
+                <ul className="space-y-2 text-[14px] font-medium leading-[1.7] text-white/85 md:pl-8 md:text-[15px]">
+                  <li>• Additional people: +$50 each</li>
+                  <li>• Additional machines: +$100 each</li>
+                  <li>• Valid for 1 full year from purchase date</li>
+                </ul>
+              </div>
+
+              <div className="mt-8 flex flex-wrap justify-center gap-4 md:mt-10 md:gap-5">
+                <Link
+                  href="/purchase?tab=membership"
+                  className="group flex h-[60px] w-full max-w-[300px] cursor-pointer touch-manipulation items-center justify-center gap-3 rounded-[10px] bg-[#f2b35f] text-[15px] font-black text-black shadow-[0_0_28px_rgba(242,179,95,0.35)] transition-all duration-300 hover:scale-[1.03] hover:bg-[#ffd27a] hover:shadow-[0_0_40px_rgba(242,179,95,0.65)] active:scale-95 active:bg-[#ffd27a] md:h-[68px] md:text-[18px]"
+                >
+                  Get Your Membership
+                  <ArrowRight
+                    size={18}
+                    className="transition-transform duration-300 group-hover:translate-x-2 group-active:translate-x-2"
+                  />
+                </Link>
+
+                <Link
+                  href="/purchase#day-pass"
+                  className="group flex h-[60px] w-full max-w-[300px] cursor-pointer touch-manipulation items-center justify-center rounded-[10px] border border-white/20 bg-[#171717] text-[15px] font-black text-white transition-all duration-300 hover:bg-[#f2b35f] hover:text-black active:scale-95 active:border-[#f2b35f] active:bg-[#f2b35f] active:text-black md:h-[68px] md:text-[18px]"
+                >
+                  Try a Day Pass First
+                </Link>
+              </div>
+
+              <p className="mt-7 text-center text-[13px] font-medium text-white/70 md:mt-8 md:text-[14px]">
+                Questions about membership?{" "}
+                <Link
+                  href="#contact"
+                  className="font-black text-white transition-all duration-300 hover:text-[#f2b35f] active:text-[#f2b35f]"
+                >
+                  Contact us
+                </Link>
+              </p>
+            </div>
+          </div>
         </div>
+      </section>
 
-        <div className="mt-7 rounded-[14px] border border-white/10 bg-[#171717]/90 px-5 py-5 md:mt-8 md:px-8 md:py-6">
-          <h3 className="mb-3 flex items-center gap-2 text-[16px] font-black text-white md:text-[18px]">
-            <Sparkles size={20} className="shrink-0 text-[#f2b35f]" />
-            Add More Riders & Machines
-          </h3>
-
-          <ul className="space-y-2 text-[14px] font-medium leading-[1.7] text-white/85 md:pl-8 md:text-[15px]">
-            <li>• Additional people: +$50 each</li>
-            <li>• Additional machines: +$100 each</li>
-            <li>• Valid for 1 full year from purchase date</li>
-          </ul>
-        </div>
-
-        <div className="mt-8 flex flex-wrap justify-center gap-4 md:mt-10 md:gap-5">
-          <Link
-  href="/purchase?tab=membership"
-            className="group flex h-[60px] w-full max-w-[300px] cursor-pointer touch-manipulation items-center justify-center gap-3 rounded-[10px] bg-[#f2b35f] text-[15px] font-black text-black shadow-[0_0_28px_rgba(242,179,95,0.35)] transition-all duration-300 hover:scale-[1.03] hover:bg-[#ffd27a] hover:shadow-[0_0_40px_rgba(242,179,95,0.65)] active:scale-95 active:bg-[#ffd27a] md:h-[68px] md:text-[18px]"
-          >
-            Get Your Membership
-            <ArrowRight
-              size={18}
-              className="transition-transform duration-300 group-hover:translate-x-2 group-active:translate-x-2"
-            />
-          </Link>
-
-          <Link
-            href="/purchase#day-pass"
-            className="group flex h-[60px] w-full max-w-[300px] cursor-pointer touch-manipulation items-center justify-center rounded-[10px] border border-white/20 bg-[#171717] text-[15px] font-black text-white transition-all duration-300 hover:bg-[#f2b35f] hover:text-black active:scale-95 active:border-[#f2b35f] active:bg-[#f2b35f] active:text-black md:h-[68px] md:text-[18px]"
-          >
-            Try a Day Pass First
-          </Link>
-        </div>
-
-        <p className="mt-7 text-center text-[13px] font-medium text-white/70 md:mt-8 md:text-[14px]">
-          Questions about membership?{" "}
-          <Link
-            href="#contact"
-            className="font-black text-white transition-all duration-300 hover:text-[#f2b35f] active:text-[#f2b35f]"
-          >
-            Contact us
-          </Link>
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
       {/* EPIC TRAILS */}
       <section
         id="epic-trails"
@@ -713,40 +827,41 @@ export default function Home() {
         </div>
       </section>
 
-  {/* TRAIL MAP */}
-<section className="relative overflow-hidden bg-[#050705] px-3 py-12 text-white sm:px-4 md:px-[4%] md:py-16 lg:px-[6%]">
-  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,rgba(38,140,82,0.18),transparent_34%),radial-gradient(circle_at_85%_70%,rgba(210,166,61,0.10),transparent_32%),linear-gradient(180deg,#060906_0%,#070707_48%,#050705_100%)]" />
+      {/* TRAIL MAP */}
+      <section className="relative overflow-hidden bg-[#050705] px-3 py-12 text-white sm:px-4 md:px-[4%] md:py-16 lg:px-[6%]">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,rgba(38,140,82,0.18),transparent_34%),radial-gradient(circle_at_85%_70%,rgba(210,166,61,0.10),transparent_32%),linear-gradient(180deg,#060906_0%,#070707_48%,#050705_100%)]" />
 
-  <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#36c978]/40 to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#36c978]/40 to-transparent" />
 
-  <div className="relative z-10 mx-auto w-full max-w-[1500px]">
-    <div className="mb-6 text-center md:mb-8">
-      <h2 className="text-[27px] font-black uppercase leading-none tracking-[-1px] text-white drop-shadow-[0_0_14px_rgba(47,191,113,0.18)] sm:text-[34px] md:text-[46px]">
-        EXPLORE OUR TRAIL MAP
-      </h2>
+        <div className="relative z-10 mx-auto w-full max-w-[1500px]">
+          <div className="mb-6 text-center md:mb-8">
+            <h2 className="text-[27px] font-black uppercase leading-none tracking-[-1px] text-white drop-shadow-[0_0_14px_rgba(47,191,113,0.18)] sm:text-[34px] md:text-[46px]">
+              EXPLORE OUR TRAIL MAP
+            </h2>
 
-      <p className="mx-auto mt-3 max-w-[620px] text-[14px] font-medium leading-[1.6] text-white/72 sm:text-[16px] md:mt-5 md:text-[20px]">
-        Navigate 60+ miles of trails and plan your adventure
-      </p>
-    </div>
+            <p className="mx-auto mt-3 max-w-[620px] text-[14px] font-medium leading-[1.6] text-white/72 sm:text-[16px] md:mt-5 md:text-[20px]">
+              Navigate 60+ miles of trails and plan your adventure
+            </p>
+          </div>
 
-    <div className="mx-auto w-full max-w-[1600px] scale-[1.03] md:scale-[1.05]">
-      <TrailMap />
-    </div>
+          <div className="mx-auto w-full max-w-[1600px] scale-[1.03] md:scale-[1.05]">
+            <TrailMap />
+          </div>
 
-    <div className="mx-auto mt-8 w-full max-w-[1380px] rounded-[22px] border border-[#36c978]/18 bg-[linear-gradient(135deg,rgba(10,35,20,0.96),rgba(7,14,10,0.98)_58%,rgba(48,38,14,0.42))] px-4 py-7 text-center shadow-[0_0_30px_rgba(47,191,113,0.08),inset_0_0_28px_rgba(47,191,113,0.04)] backdrop-blur-sm md:mt-10 md:px-8 md:py-[48px]">
-      <h2 className="mb-4 text-[21px] font-black uppercase leading-none tracking-[-0.5px] text-[#effff5] drop-shadow-[0_0_12px_rgba(47,191,113,0.22)] md:text-[27px]">
-        ALL SKILL LEVELS WELCOME
-      </h2>
+          <div className="mx-auto mt-8 w-full max-w-[1380px] rounded-[22px] border border-[#36c978]/18 bg-[linear-gradient(135deg,rgba(10,35,20,0.96),rgba(7,14,10,0.98)_58%,rgba(48,38,14,0.42))] px-4 py-7 text-center shadow-[0_0_30px_rgba(47,191,113,0.08),inset_0_0_28px_rgba(47,191,113,0.04)] backdrop-blur-sm md:mt-10 md:px-8 md:py-[48px]">
+            <h2 className="mb-4 text-[21px] font-black uppercase leading-none tracking-[-0.5px] text-[#effff5] drop-shadow-[0_0_12px_rgba(47,191,113,0.22)] md:text-[27px]">
+              ALL SKILL LEVELS WELCOME
+            </h2>
 
-      <p className="mx-auto max-w-[820px] text-[14px] font-medium leading-[1.7] text-white/74 md:text-[18px]">
-        Whether you're a seasoned pro or just starting out, River Neck Acres
-        has the perfect trail for you. Our marked trail system ensures you
-        can find routes that match your experience and comfort level.
-      </p>
-    </div>
-  </div>
-</section>
+            <p className="mx-auto max-w-[820px] text-[14px] font-medium leading-[1.7] text-white/74 md:text-[18px]">
+              Whether you're a seasoned pro or just starting out, River Neck
+              Acres has the perfect trail for you. Our marked trail system
+              ensures you can find routes that match your experience and
+              comfort level.
+            </p>
+          </div>
+        </div>
+      </section>
 
       <StayPlaySection />
       <EventsSection />

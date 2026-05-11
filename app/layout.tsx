@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+import { CartProvider } from "@/context/CartContext";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -14,7 +16,9 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
-export const metadata: Metadata = {metadataBase: new URL("https://www.riverneckacresatv.com"),
+export const metadata: Metadata = {
+  metadataBase: new URL("https://www.riverneckacresatv.com"),
+
   title: "River Neck Acres ATV Park & Campground",
 
   description:
@@ -65,9 +69,11 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} scroll-smooth antialiased`}
     >
       <body className="min-h-screen overflow-x-hidden bg-[#101010] font-sans text-white selection:bg-[#f2c06b] selection:text-black">
-        <div className="relative min-h-screen overflow-x-hidden">
-          {children}
-        </div>
+        <CartProvider>
+          <div className="relative min-h-screen overflow-x-hidden">
+            {children}
+          </div>
+        </CartProvider>
       </body>
     </html>
   );

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { useRouter } from "next/navigation";
+import { useCart } from "@/context/CartContext";
 import {
   CalendarDays,
   Users,
@@ -21,9 +22,32 @@ type TicketItem = {
   price: number;
 };
 
-const EVENTS = [
+type EventTicketGroup = {
+  name: string;
+  startDate: string;
+  endDate: string;
+  displayDate: string;
+  tickets: TicketItem[];
+};
+
+const DEFAULT_TICKETS: TicketItem[] = [
   {
-    name: "Summer Kick Off 2026",
+    name: "General Event Admission",
+    subtitle: "Event Access",
+    desc: "Admission for the selected event.",
+    price: 50,
+  },
+  {
+    name: "Weekend Event Pass",
+    subtitle: "Full Weekend",
+    desc: "Weekend access for the selected event.",
+    price: 75,
+  },
+];
+
+const EVENTS: EventTicketGroup[] = [
+  {
+    name: "Summer Kick Off: Music, Racing and More",
     startDate: "2026-05-11",
     endDate: "2026-05-17",
     displayDate: "May 11 - May 17, 2026",
@@ -60,25 +84,53 @@ const EVENTS = [
       },
     ],
   },
+  {
+    name: "Annual Spring Fling: Concert, Racing and More",
+    startDate: "2026-03-05",
+    endDate: "2026-03-08",
+    displayDate: "March 5 - March 8, 2026",
+    tickets: [
+      {
+        name: "Weekend Pass",
+        subtitle: "Thursday - Sunday",
+        desc: "Full Spring Fling access.",
+        price: 75,
+      },
+      {
+        name: "Concert & Event Pass",
+        subtitle: "Saturday Event",
+        desc: "Saturday activities, concert, and event access.",
+        price: 60,
+      },
+      {
+        name: "VIP Weekend",
+        subtitle: "Premium Access",
+        desc: "Premium event access for Spring Fling.",
+        price: 150,
+      },
+    ],
+  },
 ];
 
 export default function PurchasePage() {
   const router = useRouter();
+  const { addToCart } = useCart();
 
-  const [activeTab, setActiveTab] =
-    useState<TabType>("day");
+  const [activeTab, setActiveTab] = useState<TabType>("day");
+  const [selectedEventName, setSelectedEventName] = useState("");
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
     const tab = params.get("tab");
+    const eventTitle = params.get("eventTitle");
 
-    if (
-      tab === "membership" ||
-      tab === "events" ||
-      tab === "day"
-    ) {
+    if (tab === "membership" || tab === "events" || tab === "day") {
       setActiveTab(tab as TabType);
+    }
+
+    if (eventTitle) {
+      setSelectedEventName(eventTitle);
     }
   }, []);
 
@@ -93,12 +145,22 @@ export default function PurchasePage() {
 
   const [memberPeople, setMemberPeople] = useState(2);
   const [memberMachines, setMemberMachines] = useState(1);
-  const currentEvent = EVENTS[0];
+
+  const currentEvent =
+    EVENTS.find((event) => event.name === selectedEventName) ||
+    (selectedEventName
+      ? {
+          name: selectedEventName,
+          startDate: "",
+          endDate: "",
+          displayDate: "Selected Event",
+          tickets: DEFAULT_TICKETS,
+        }
+      : EVENTS[0]);
+
   const eventTickets = currentEvent.tickets;
 
   const [ticketQty, setTicketQty] = useState<Record<string, number>>({});
-
-  const tentCampingTotal = tentCamping ? tentNights * 10 : 0;
 
   const daySubtotal = useMemo(() => {
     let total = people * 10 + machines * 15;
@@ -120,67 +182,48 @@ export default function PurchasePage() {
     return 500 + extraPeople + extraMachines;
   }, [memberPeople, memberMachines]);
 
-  const isLoggedIn = () => {
-    return Boolean(
-      localStorage.getItem("riverneckUser") ||
-        localStorage.getItem("user") ||
-        localStorage.getItem("token")
-    );
+  const makeCartId = (prefix: string) => {
+    return `${prefix}-${Date.now()}-${Math.floor(Math.random() * 100000)}`;
   };
 
-  const addToCartOrSignIn = (item: any) => {
-    if (!isLoggedIn()) {
-      router.push("/auth?redirect=/cart");
-      return;
-    }
-
-    const oldCart = JSON.parse(localStorage.getItem("riverneckCart") || "[]");
-
-    localStorage.setItem(
-      "riverneckCart",
-      JSON.stringify([
-        ...oldCart,
-        {
-          id: crypto.randomUUID(),
-          ...item,
-        },
-      ])
-    );
-
+  const addItemToRealCart = (item: {
+    id: string;
+    title: string;
+    price: number;
+    quantity: number;
+  }) => {
+    addToCart(item);
     router.push("/cart");
   };
 
   const handleDayPassAdd = () => {
-    addToCartOrSignIn({
-      type: "Day Pass",
-      dateRange,
-      people,
-      machines,
-      nightRide,
-      tentCamping,
-      tentNights: tentCamping ? tentNights : 0,
-      total: dayTotal,
+    addItemToRealCart({
+      id: makeCartId("day-pass"),
+      title: `Day Pass${dateRange ? ` - ${dateRange}` : ""} | ${people} People, ${machines} Machines${
+        nightRide ? ", Night Ride" : ""
+      }${tentCamping ? `, Tent Camping ${tentNights} Night(s)` : ""}`,
+      price: Number(dayTotal.toFixed(2)),
+      quantity: 1,
     });
   };
 
   const handleMembershipAdd = () => {
-    addToCartOrSignIn({
-      type: "Annual Membership",
-      people: memberPeople,
-      machines: memberMachines,
-      total: memberTotal,
+    addItemToRealCart({
+      id: makeCartId("membership"),
+      title: `Annual Membership | ${memberPeople} People, ${memberMachines} Machine(s)`,
+      price: Number(memberTotal.toFixed(2)),
+      quantity: 1,
     });
   };
 
   const handleTicketAdd = (ticket: TicketItem) => {
     const qty = ticketQty[ticket.name] || 1;
 
-    addToCartOrSignIn({
-      type: "Event Ticket",
-      event: currentEvent.name,
-      ticketName: ticket.name,
+    addItemToRealCart({
+      id: makeCartId("event-ticket"),
+      title: `${currentEvent.name} - ${ticket.name}`,
+      price: ticket.price,
       quantity: qty,
-      total: ticket.price * qty,
     });
   };
 
@@ -211,10 +254,7 @@ export default function PurchasePage() {
         </div>
 
         <div className="mb-5 grid grid-cols-1 gap-2 rounded-2xl border border-white/15 bg-white/10 p-2 shadow-[0_20px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:grid-cols-3">
-          <TabButton
-            active={activeTab === "day"}
-            onClick={() => setActiveTab("day")}
-          >
+          <TabButton active={activeTab === "day"} onClick={() => setActiveTab("day")}>
             Day Pass
           </TabButton>
 
@@ -233,7 +273,6 @@ export default function PurchasePage() {
           </TabButton>
         </div>
 
-        {/* DAY PASS */}
         {activeTab === "day" && (
           <Panel>
             <h2 className="text-[24px] font-black md:text-3xl">
@@ -333,9 +372,7 @@ export default function PurchasePage() {
 
             <div className="mt-7 border-t border-white/15 pt-5">
               <PriceRow label="Subtotal:" value={daySubtotal} />
-
               <PriceRow label="Admission Tax:" value={dayTax} />
-
               <PriceRow label="Processing Fee:" value={dayFee} />
 
               <div className="mt-4 flex justify-between border-t border-white/15 pt-4 text-[18px] font-black md:text-xl">
@@ -348,7 +385,6 @@ export default function PurchasePage() {
           </Panel>
         )}
 
-        {/* MEMBERSHIP */}
         {activeTab === "membership" && (
           <Panel>
             <h2 className="text-[24px] font-black md:text-3xl">
@@ -400,7 +436,6 @@ export default function PurchasePage() {
           </Panel>
         )}
 
-        {/* EVENTS */}
         {activeTab === "events" && (
           <Panel>
             <div className="mb-5 flex items-start gap-3">
@@ -412,12 +447,16 @@ export default function PurchasePage() {
                 </h2>
 
                 <p className="text-[14px] font-semibold leading-[1.6] text-white/90 md:text-base">
-                  Purchase tickets for the next event.
+                  Purchase tickets for the selected event.
                 </p>
               </div>
             </div>
 
             <div className="mb-5 rounded-2xl border border-[#63d6b8]/20 bg-gradient-to-r from-[#1d6d54]/45 to-[#f6c35f]/12 p-4 md:p-5">
+              <p className="mb-2 text-[11px] font-black uppercase tracking-[0.18em] text-[#63d6b8]">
+                Selected Event
+              </p>
+
               <h3 className="text-[20px] font-black leading-tight md:text-2xl">
                 {currentEvent.name}
               </h3>

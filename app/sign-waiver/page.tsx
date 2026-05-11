@@ -7,8 +7,10 @@ import {
   CalendarDays,
   PenLine,
   Shield,
-  AlertTriangle,
+  Loader2,
+  CheckCircle,
 } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
 
 function formatUSDate(value: string) {
   if (!value) return "Select Date";
@@ -48,6 +50,126 @@ function SignWaiverContent() {
   const [minors, setMinors] = useState(0);
   const [date, setDate] = useState("");
 
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [driversLicense, setDriversLicense] = useState("");
+  const [vehicleDescription, setVehicleDescription] = useState("");
+  const [signature, setSignature] = useState("");
+
+  const [agreedRules, setAgreedRules] = useState(false);
+  const [agreedMedia, setAgreedMedia] = useState(false);
+  const [agreedPipeline, setAgreedPipeline] = useState(false);
+
+  const [submitting, setSubmitting] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [lookupPhone, setLookupPhone] = useState("");
+const [lookupLoading, setLookupLoading] = useState(false);
+
+  async function submitWaiver(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    if (
+      !firstName ||
+      !lastName ||
+      !phone ||
+      !date ||
+      !driversLicense ||
+      !vehicleDescription ||
+      !signature
+    ) {
+      alert("Please complete all required fields.");
+      return;
+    }
+
+    if (!agreedRules || !agreedMedia || !agreedPipeline) {
+      alert("Please check all required agreement boxes.");
+      return;
+    }
+
+    setSubmitting(true);
+    setSuccessMessage("");
+
+    const { error } = await supabase.from("Waiver").insert([
+      {
+        first_name: firstName,
+        last_name: lastName,
+        phone,
+        waiver_date: date,
+        drivers_license: driversLicense,
+        vehicle_description: vehicleDescription,
+        minors,
+        signature,
+        agreed_rules: agreedRules,
+        agreed_media: agreedMedia,
+        agreed_pipeline: agreedPipeline,
+      },
+    ]);
+
+    setSubmitting(false);
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    setSuccessMessage("Waiver submitted successfully.");
+    setTimeout(() => {
+  window.location.href = "/";
+}, 1800);
+
+    setFirstName("");
+    setLastName("");
+    setPhone("");
+    setDriversLicense("");
+    setVehicleDescription("");
+    setSignature("");
+    setDate("");
+    setMinors(0);
+    setAgreedRules(false);
+    setAgreedMedia(false);
+    setAgreedPipeline(false);
+  }
+async function lookupWaiver() {
+  if (!lookupPhone) {
+    alert("Enter phone number.");
+    return;
+  }
+
+  setLookupLoading(true);
+
+  const { data, error } = await supabase
+    .from("Waiver")
+    .select("*")
+    .eq("phone", lookupPhone)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .single();
+
+  setLookupLoading(false);
+
+  if (error || !data) {
+    alert("No waiver found.");
+    return;
+  }
+
+  setFirstName(data.first_name || "");
+  setLastName(data.last_name || "");
+  setPhone(data.phone || "");
+  setDriversLicense(data.drivers_license || "");
+  setVehicleDescription(data.vehicle_description || "");
+  setSignature(data.signature || "");
+  setMinors(data.minors || 0);
+
+  setAgreedRules(true);
+  setAgreedMedia(true);
+  setAgreedPipeline(true);
+
+  const today = new Date().toISOString().split("T")[0];
+  setDate(today);
+
+  setMode("new");
+}
   return (
     <main
       className={`relative min-h-screen overflow-hidden bg-[#101010] px-4 text-white selection:bg-[#f2c06b] selection:text-black ${
@@ -86,14 +208,20 @@ function SignWaiverContent() {
             </p>
 
             <div className="flex flex-col gap-3 md:flex-row md:gap-4">
-              <input
-                placeholder="Enter phone number"
+             <input
+  value={lookupPhone}
+  onChange={(e) => setLookupPhone(e.target.value)}
+  placeholder="Enter phone number"
                 className="h-[54px] w-full rounded-xl border border-white/10 bg-[#151515] px-5 text-[15px] font-semibold outline-none transition focus:border-[#25b99a] md:h-[58px] md:text-[18px]"
               />
 
-              <button className="h-[54px] touch-manipulation rounded-xl bg-[#25d0bd] px-8 text-[15px] font-black text-black shadow-[0_0_25px_rgba(37,208,189,0.25)] transition active:scale-95 hover:bg-[#f2c06b] md:h-[58px]">
-                Look Up
-              </button>
+             <button
+  onClick={lookupWaiver}
+  disabled={lookupLoading}
+  className="h-[54px] touch-manipulation rounded-xl bg-[#25d0bd] px-8 text-[15px] font-black text-black shadow-[0_0_25px_rgba(37,208,189,0.25)] transition active:scale-95 hover:bg-[#f2c06b] md:h-[58px]"
+>
+  {lookupLoading ? "Searching..." : "Look Up"}
+</button>
             </div>
 
             <p className="mt-6 text-[14px] font-semibold text-white/75 md:mt-7 md:text-[18px]">
@@ -121,6 +249,13 @@ function SignWaiverContent() {
               sign to continue with your day pass purchase. This waiver is valid
               for 7 days.
             </p>
+
+            {successMessage && (
+              <div className="mt-5 flex items-center gap-3 rounded-2xl border border-[#25b99a]/30 bg-[#25b99a]/10 p-4 text-[14px] font-black text-[#8fffe5]">
+                <CheckCircle size={20} />
+                {successMessage}
+              </div>
+            )}
 
             <label className="mb-3 mt-6 block text-[14px] font-black md:text-[16px]">
               Liability Waiver <span className="text-[#ff6b8a]">*</span>
@@ -199,21 +334,31 @@ function SignWaiverContent() {
               </p>
             </div>
 
-            <form
-              className="mt-6 space-y-5"
-              onSubmit={(e) => {
-                e.preventDefault();
-                alert("Waiver submitted successfully!");
-              }}
-            >
+            <form className="mt-6 space-y-5" onSubmit={submitWaiver}>
               <h3 className="text-[15px] font-black">Personal Information</h3>
 
               <div className="grid gap-5 md:grid-cols-2">
-                <Field label="First Name *" placeholder="Enter first name" />
-                <Field label="Last Name *" placeholder="Enter last name" />
+                <Field
+                  label="First Name *"
+                  placeholder="Enter first name"
+                  value={firstName}
+                  onChange={setFirstName}
+                />
+
+                <Field
+                  label="Last Name *"
+                  placeholder="Enter last name"
+                  value={lastName}
+                  onChange={setLastName}
+                />
               </div>
 
-              <Field label="Phone Number *" placeholder="(555) 123-4567" />
+              <Field
+                label="Phone Number *"
+                placeholder="(555) 123-4567"
+                value={phone}
+                onChange={setPhone}
+              />
 
               <div>
                 <label className="mb-2 block text-[13px] font-black">
@@ -253,12 +398,16 @@ function SignWaiverContent() {
                 label="Driver's License Number & State *"
                 placeholder='If no license enter "passenger"'
                 help='Enter your driver’s license number and state, or "passenger" if not driving'
+                value={driversLicense}
+                onChange={setDriversLicense}
               />
 
               <Field
                 label="Vehicle Description & State *"
                 placeholder='If no vehicle enter "passenger"'
                 help='Enter your vehicle make/model and state, or "passenger" if not bringing a vehicle'
+                value={vehicleDescription}
+                onChange={setVehicleDescription}
               />
 
               <div>
@@ -296,19 +445,36 @@ function SignWaiverContent() {
                 </p>
               </div>
 
-              <CheckBox label="By checking this box, I agree to abide by all South Carolina Laws and the rules of Riverneck Acres, INC." />
-              <CheckBox label="By checking this box, I understand I may appear on videos and promotional materials and I release all rights and claims." />
-              <CheckBox label="By checking this box, I am aware I cannot access the natural gas pipeline and I can ONLY cross at approved crossings." />
+              <CheckBox
+                checked={agreedRules}
+                onChange={setAgreedRules}
+                label="By checking this box, I agree to abide by all South Carolina Laws and the rules of Riverneck Acres, INC."
+              />
+
+              <CheckBox
+                checked={agreedMedia}
+                onChange={setAgreedMedia}
+                label="By checking this box, I understand I may appear on videos and promotional materials and I release all rights and claims."
+              />
+
+              <CheckBox
+                checked={agreedPipeline}
+                onChange={setAgreedPipeline}
+                label="By checking this box, I am aware I cannot access the natural gas pipeline and I can ONLY cross at approved crossings."
+              />
 
               <Field
                 label="Electronic Signature *"
                 placeholder="Type your full legal name"
                 help="By typing your name, you agree that this constitutes a legal signature"
+                value={signature}
+                onChange={setSignature}
               />
 
               <div className="sticky bottom-0 -mx-4 mt-6 flex justify-end gap-3 border-t border-white/10 bg-[#151515]/95 px-4 py-3 backdrop-blur-md md:-mx-6 md:px-6">
                 <button
                   type="button"
+                  onClick={() => setMode("lookup")}
                   className="h-[44px] rounded-xl border border-white/10 px-6 text-[13px] font-black text-white transition hover:bg-white/10"
                 >
                   Cancel
@@ -316,10 +482,16 @@ function SignWaiverContent() {
 
                 <button
                   type="submit"
-                  className="flex h-[44px] items-center justify-center gap-2 rounded-xl bg-[#25b99a] px-6 text-[13px] font-black text-white transition hover:bg-[#2fd9b5] active:scale-95"
+                  disabled={submitting}
+                  className="flex h-[44px] items-center justify-center gap-2 rounded-xl bg-[#25b99a] px-6 text-[13px] font-black text-white transition hover:bg-[#2fd9b5] active:scale-95 disabled:opacity-60"
                 >
-                  <PenLine size={17} />
-                  Sign Waiver
+                  {submitting ? (
+                    <Loader2 size={17} className="animate-spin" />
+                  ) : (
+                    <PenLine size={17} />
+                  )}
+
+                  {submitting ? "Submitting..." : "Sign Waiver"}
                 </button>
               </div>
             </form>
@@ -334,10 +506,14 @@ function Field({
   label,
   placeholder,
   help,
+  value,
+  onChange,
 }: {
   label: string;
   placeholder: string;
   help?: string;
+  value: string;
+  onChange: (value: string) => void;
 }) {
   return (
     <div>
@@ -345,6 +521,8 @@ function Field({
 
       <input
         required
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         className="h-[48px] w-full rounded-xl border border-white/10 bg-[#151515] px-4 text-[13px] font-semibold text-white outline-none transition focus:border-[#f2c06b] md:h-[52px] md:text-[15px]"
       />
@@ -358,12 +536,22 @@ function Field({
   );
 }
 
-function CheckBox({ label }: { label: string }) {
+function CheckBox({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: (value: boolean) => void;
+}) {
   return (
     <label className="flex cursor-pointer items-start gap-3 border-t border-white/10 pt-3 text-[12px] font-bold leading-[1.5] text-white/90 md:text-[13px]">
       <input
         type="checkbox"
         required
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
         className="mt-1 h-4 w-4 shrink-0 accent-[#25b99a]"
       />
       <span>{label}</span>
