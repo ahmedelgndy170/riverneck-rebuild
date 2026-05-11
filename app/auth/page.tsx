@@ -110,28 +110,30 @@ export default function AuthPage() {
     try {
       setLoading(true);
       setMessage("");
+const { data, error } = await supabase.auth.signInWithPassword({
+  email: signinEmail,
+  password: signinPassword,
+});
 
-      const { error } = await supabase.auth.signInWithPassword({
-        email: signinEmail,
-        password: signinPassword,
-      });
+console.log("SIGNIN DATA:", data);
+console.log("SIGNIN ERROR:", error);
 
-      if (error) {
-        if (error.message.includes("Invalid login credentials")) {
-          setMessage("Email or password is incorrect.");
-        } else {
-          setMessage(error.message);
-        }
+if (error) {
+  setMessage(error.message);
+  return;
+}
 
-        return;
-      }
+if (!data?.session) {
+  setMessage("No session returned from Supabase.");
+  return;
+}
 
-      setMessage("Signed in successfully!");
+setMessage("Signed in successfully!");
 
-      setTimeout(() => {
-        router.push("/");
-        router.refresh();
-      }, 800);
+setTimeout(() => {
+  router.push("/");
+  router.refresh();
+}, 800);
     } catch {
       setMessage("Something went wrong.");
     } finally {
