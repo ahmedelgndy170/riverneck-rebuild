@@ -4,10 +4,12 @@ import Link from "next/link";
 import { useState } from "react";
 import { ArrowLeft, CreditCard, Loader2, ShoppingCart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useNotify } from "@/context/NotificationContext";
 import { supabase } from "@/lib/supabaseClient";
 
 export default function CheckoutPage() {
   const { cart, subtotal, clearCart } = useCart();
+  const { toast } = useNotify();
 
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
@@ -21,12 +23,12 @@ export default function CheckoutPage() {
 
   async function createOrder() {
     if (cart.length === 0) {
-      alert("Your cart is empty.");
+      toast("Your cart is empty.", "error");
       return;
     }
 
     if (!customerName || !customerEmail || !customerPhone) {
-      alert("Please complete customer information.");
+      toast("Please complete customer information.", "error");
       return;
     }
 
@@ -63,7 +65,7 @@ export default function CheckoutPage() {
 
     if (orderError || !orderData) {
       setSubmitting(false);
-      alert(orderError?.message || "Could not create order.");
+      toast(orderError?.message || "Could not create order.", "error");
       return;
     }
 
@@ -81,7 +83,7 @@ export default function CheckoutPage() {
     setSubmitting(false);
 
     if (itemsError) {
-      alert(itemsError.message);
+      toast(itemsError.message, "error");
       return;
     }
 

@@ -231,7 +231,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       <header className="sticky top-0 z-50 border-b border-white/10 bg-[#151515]/95 backdrop-blur-xl">
         <div className="flex h-[72px] items-center justify-between px-4 md:px-8">
           <Link
-            href="/"
+            href="/admin"
             className="flex items-center gap-2 text-[#25b99a] transition hover:text-[#35e0bd]"
           >
             <Home size={24} />

@@ -203,7 +203,7 @@ export default function StayPlaySection() {
               onClick={goToSignIn}
               className="mt-auto h-[52px] w-full cursor-pointer touch-manipulation rounded-[10px] bg-[#1d6d54] text-[15px] font-black text-white shadow-[0_0_24px_rgba(29,109,84,0.45)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#f6c35f] hover:text-black hover:shadow-[0_0_35px_rgba(246,195,95,0.55)] active:scale-95 active:bg-[#f6c35f] active:text-black md:h-[56px] md:text-[16px]"
             >
-              Sign In to Book
+              Log In to Book
             </button>
           </div>
         </div>
@@ -246,7 +246,7 @@ export default function StayPlaySection() {
               onClick={goToSignIn}
               className="mt-auto h-[52px] w-full cursor-pointer touch-manipulation rounded-[10px] bg-[#1d6d54] text-[15px] font-black text-white shadow-[0_0_24px_rgba(29,109,84,0.45)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#f6c35f] hover:text-black hover:shadow-[0_0_35px_rgba(246,195,95,0.55)] active:scale-95 active:bg-[#f6c35f] active:text-black md:h-[56px] md:text-[16px]"
             >
-              Sign In to Book
+              Log In to Book
             </button>
           </div>
         </div>
@@ -290,7 +290,7 @@ export default function StayPlaySection() {
               onClick={goToSignIn}
               className="mt-auto h-[52px] w-full cursor-pointer touch-manipulation rounded-[10px] bg-[#1d6d54] text-[15px] font-black text-white shadow-[0_0_24px_rgba(29,109,84,0.45)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#f6c35f] hover:text-black hover:shadow-[0_0_35px_rgba(246,195,95,0.55)] active:scale-95 active:bg-[#f6c35f] active:text-black md:h-[56px] md:text-[16px]"
             >
-              Sign In to Book
+              Log In to Book
             </button>
           </div>
         </div>

@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import { CartProvider } from "@/context/CartContext";
+import { NotificationProvider } from "@/context/NotificationContext";
+import PublicShell from "@/components/PublicShell";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -70,9 +72,13 @@ export default function RootLayout({
     >
       <body className="min-h-screen overflow-x-hidden bg-[#101010] font-sans text-white selection:bg-[#f2c06b] selection:text-black">
         <CartProvider>
-          <div className="relative min-h-screen overflow-x-hidden">
-            {children}
-          </div>
+          <NotificationProvider>
+          <PublicShell>
+            <div className="relative min-h-screen overflow-x-hidden">
+              {children}
+            </div>
+          </PublicShell>
+          </NotificationProvider>
         </CartProvider>
       </body>
     </html>

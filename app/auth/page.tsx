@@ -1,12 +1,25 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ShieldCheck, Lock, User, Phone, Mail } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
+import { useNotify } from "@/context/NotificationContext";
+import { resolvePostLoginPath } from "@/lib/postLoginPath";
+import { RequiredMark } from "@/components/RequiredLabel";
 
 export default function AuthPage() {
+  return (
+    <Suspense fallback={null}>
+      <AuthPageContent />
+    </Suspense>
+  );
+}
+
+function AuthPageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { toast } = useNotify();
 
   const [tab, setTab] = useState<"signin" | "signup">("signin");
   const [loading, setLoading] = useState(false);
@@ -35,6 +48,13 @@ export default function AuthPage() {
       setMessage("Create your new password.");
     }
   }, []);
+
+  useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (tabParam === "signup" || tabParam === "signin") {
+      setTab(tabParam);
+    }
+  }, [searchParams]);
 
   const checks = useMemo(() => {
     return {
@@ -68,12 +88,17 @@ export default function AuthPage() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!signupName.trim() || !signupEmail.trim() || !signupPhone.trim() || !password) {
+      toast("Please complete all required fields.", "error");
+      return;
+    }
+
     try {
       setLoading(true);
       setMessage("");
 
       if (password.length < 6) {
-        setMessage("Password must be at least 6 characters.");
+        toast("Password must be at least 6 characters.", "error");
         return;
       }
 
@@ -89,16 +114,16 @@ export default function AuthPage() {
       });
 
       if (error) {
-        setMessage(error.message);
+        toast(error.message, "error");
         return;
       }
 
-      setMessage("Account created successfully!");
+      toast("Account created successfully!", "success");
       setTab("signin");
       setSigninEmail(signupEmail);
       setSigninPassword("");
     } catch {
-      setMessage("Something went wrong.");
+      toast("Something went wrong.", "error");
     } finally {
       setLoading(false);
     }
@@ -107,35 +132,37 @@ export default function AuthPage() {
   const handleSignin = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!signinEmail.trim() || !signinPassword) {
+      toast("Please enter your email and password.", "error");
+      return;
+    }
+
     try {
       setLoading(true);
       setMessage("");
-const { data, error } = await supabase.auth.signInWithPassword({
-  email: signinEmail,
-  password: signinPassword,
-});
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: signinEmail,
+        password: signinPassword,
+      });
 
-console.log("SIGNIN DATA:", data);
-console.log("SIGNIN ERROR:", error);
+      if (error) {
+        toast(error.message, "error");
+        return;
+      }
 
-if (error) {
-  setMessage(error.message);
-  return;
-}
+      if (!data?.session) {
+        toast("No session returned from Supabase.", "error");
+        return;
+      }
 
-if (!data?.session) {
-  setMessage("No session returned from Supabase.");
-  return;
-}
+      const redirect = searchParams.get("redirect");
+      const path = await resolvePostLoginPath(redirect);
 
-setMessage("Signed in successfully!");
-
-setTimeout(() => {
-  router.push("/");
-  router.refresh();
-}, 800);
+      toast("Signed in successfully!", "success");
+      router.push(path);
+      router.refresh();
     } catch {
-      setMessage("Something went wrong.");
+      toast("Something went wrong.", "error");
     } finally {
       setLoading(false);
     }
@@ -244,7 +271,7 @@ setTimeout(() => {
                   : "text-white/70 hover:bg-white/10 hover:text-white active:bg-white/10 active:text-white"
               }`}
             >
-              Sign In
+              Log In
             </button>
 
             <button
@@ -297,7 +324,7 @@ setTimeout(() => {
                 }}
                 className="w-full text-center text-[14px] font-black text-[#f2c06b] transition hover:text-white active:text-white"
               >
-                Back to Sign In
+                Back to Log In
               </button>
             </div>
           ) : forgotMode ? (
@@ -331,15 +358,14 @@ setTimeout(() => {
                 }}
                 className="w-full text-center text-[14px] font-black text-[#f2c06b] transition hover:text-white active:text-white"
               >
-                Back to Sign In
+                Back to Log In
               </button>
             </div>
           ) : tab === "signin" ? (
-            <form onSubmit={handleSignin} className="space-y-5">
-              <Field label="Email" icon={<Mail size={17} />}>
+            <form onSubmit={handleSignin} className="space-y-5" noValidate>
+              <Field label="Email" required icon={<Mail size={17} />}>
                 <input
                   suppressHydrationWarning
-                  required
                   type="email"
                   value={signinEmail}
                   onChange={(e) => setSigninEmail(e.target.value)}
@@ -348,10 +374,9 @@ setTimeout(() => {
                 />
               </Field>
 
-              <Field label="Password" icon={<Lock size={17} />}>
+              <Field label="Password" required icon={<Lock size={17} />}>
                 <input
                   suppressHydrationWarning
-                  required
                   type="password"
                   value={signinPassword}
                   onChange={(e) => setSigninPassword(e.target.value)}
@@ -377,15 +402,14 @@ setTimeout(() => {
                 type="submit"
                 className="h-[54px] w-full touch-manipulation rounded-xl bg-[#25d0bd] text-[14px] font-black text-white shadow-[0_0_24px_rgba(37,208,189,0.28)] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_34px_rgba(37,208,189,0.48)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 md:h-[58px] md:text-[15px]"
               >
-                {loading ? "Loading..." : "Sign In"}
+                {loading ? "Loading..." : "Log In"}
               </button>
             </form>
           ) : (
-            <form onSubmit={handleSignup} className="space-y-5">
-              <Field label="Full Name *" icon={<User size={17} />}>
+            <form onSubmit={handleSignup} className="space-y-5" noValidate>
+              <Field label="Full Name" required icon={<User size={17} />}>
                 <input
                   suppressHydrationWarning
-                  required
                   type="text"
                   value={signupName}
                   onChange={(e) => setSignupName(e.target.value)}
@@ -394,10 +418,9 @@ setTimeout(() => {
                 />
               </Field>
 
-              <Field label="Email *" icon={<Mail size={17} />}>
+              <Field label="Email" required icon={<Mail size={17} />}>
                 <input
                   suppressHydrationWarning
-                  required
                   type="email"
                   value={signupEmail}
                   onChange={(e) => setSignupEmail(e.target.value)}
@@ -406,10 +429,9 @@ setTimeout(() => {
                 />
               </Field>
 
-              <Field label="Phone Number *" icon={<Phone size={17} />}>
+              <Field label="Phone Number" required icon={<Phone size={17} />}>
                 <input
                   suppressHydrationWarning
-                  required
                   type="tel"
                   value={signupPhone}
                   onChange={(e) => setSignupPhone(e.target.value)}
@@ -422,10 +444,9 @@ setTimeout(() => {
                 </p>
               </Field>
 
-              <Field label="Password *" icon={<Lock size={17} />}>
+              <Field label="Password" required icon={<Lock size={17} />}>
                 <input
                   suppressHydrationWarning
-                  required
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -476,10 +497,12 @@ setTimeout(() => {
 function Field({
   label,
   icon,
+  required,
   children,
 }: {
   label: string;
   icon: React.ReactNode;
+  required?: boolean;
   children: React.ReactNode;
 }) {
   return (
@@ -487,6 +510,7 @@ function Field({
       <label className="mb-3 flex items-center gap-2 text-[14px] font-black md:text-[15px]">
         <span className="text-[#25b99a]">{icon}</span>
         {label}
+        {required && <RequiredMark />}
       </label>
 
       {children}

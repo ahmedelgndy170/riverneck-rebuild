@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, FileText, Search, Trash2 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
+import { useNotify } from "@/context/NotificationContext";
 
 type WaiverType = {
   id: string;
@@ -19,6 +20,7 @@ type WaiverType = {
 };
 
 export default function AdminWaiversPage() {
+  const { toast, confirm } = useNotify();
   const [waivers, setWaivers] = useState<WaiverType[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -32,7 +34,7 @@ export default function AdminWaiversPage() {
       .order("created_at", { ascending: false });
 
     if (error) {
-      alert(error.message);
+      toast(error.message, "error");
       setLoading(false);
       return;
     }
@@ -46,12 +48,19 @@ export default function AdminWaiversPage() {
   }, []);
 
   async function deleteWaiver(id: string) {
-    if (!confirm("Delete this waiver?")) return;
+    const confirmed = await confirm({
+      title: "Delete waiver",
+      message: "Delete this waiver? This cannot be undone.",
+      confirmLabel: "Delete",
+      destructive: true,
+    });
+
+    if (!confirmed) return;
 
     const { error } = await supabase.from("Waiver").delete().eq("id", id);
 
     if (error) {
-      alert(error.message);
+      toast(error.message, "error");
       return;
     }
 

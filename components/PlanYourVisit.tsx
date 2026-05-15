@@ -1,6 +1,7 @@
 "use client";
 
 import { Clock, MapPin, Phone, Mail } from "lucide-react";
+import ContactForm from "@/components/ContactForm";
 
 function getParkStatus() {
   const now = new Date();
@@ -164,50 +165,12 @@ export default function PlanYourVisit() {
             </div>
           </div>
 
-          <form className="rounded-[18px] border border-white/10 bg-white/[0.03] p-5 transition active:scale-[0.99] active:border-[#f2b35f]/50 md:p-10">
+          <div className="rounded-[18px] border border-white/10 bg-white/[0.03] p-5 transition active:scale-[0.99] active:border-[#f2b35f]/50 md:p-10">
             <h3 className="mb-5 text-[22px] font-black uppercase md:mb-8 md:text-[28px]">
               SEND US A MESSAGE
             </h3>
-
-            <label className="mb-2 block text-[14px] font-black md:mb-3 md:text-[16px]">
-              Your Name
-            </label>
-            <input
-              className="mb-5 h-[50px] w-full touch-manipulation rounded-[10px] border border-white/10 bg-black/35 px-4 text-[15px] text-white outline-none transition placeholder:text-white/35 hover:border-white/25 focus:border-[#25b99a] md:mb-6 md:h-[52px]"
-              placeholder="John Doe"
-            />
-
-            <label className="mb-2 block text-[14px] font-black md:mb-3 md:text-[16px]">
-              Your Email
-            </label>
-            <input
-              className="mb-5 h-[50px] w-full touch-manipulation rounded-[10px] border border-white/10 bg-black/35 px-4 text-[15px] text-white outline-none transition placeholder:text-white/35 hover:border-white/25 focus:border-[#25b99a] md:mb-6 md:h-[52px]"
-              placeholder="john@example.com"
-            />
-
-            <label className="mb-2 block text-[14px] font-black md:mb-3 md:text-[16px]">
-              Phone Number
-            </label>
-            <input
-              className="mb-5 h-[50px] w-full touch-manipulation rounded-[10px] border border-white/10 bg-black/35 px-4 text-[15px] text-white outline-none transition placeholder:text-white/35 hover:border-white/25 focus:border-[#25b99a] md:mb-6 md:h-[52px]"
-              placeholder="(555) 123-4567"
-            />
-
-            <label className="mb-2 block text-[14px] font-black md:mb-3 md:text-[16px]">
-              Your Message
-            </label>
-            <textarea
-              className="mb-7 h-[130px] w-full touch-manipulation resize-none rounded-[10px] border border-white/10 bg-black/35 p-4 text-[15px] text-white outline-none transition placeholder:text-white/35 hover:border-white/25 focus:border-[#25b99a] md:mb-8 md:h-[150px]"
-              placeholder="Tell us about your visit plans..."
-            />
-
-            <button
-              type="button"
-              className="h-[54px] w-full cursor-pointer touch-manipulation rounded-[12px] bg-[#f2b35f] text-[15px] font-black text-black transition-all duration-300 hover:scale-[1.02] hover:bg-[#ffbd70] active:scale-95 active:bg-[#25b99a] active:text-white md:h-[58px] md:text-[16px]"
-            >
-              Send Message
-            </button>
-          </form>
+            <ContactForm variant="gold" />
+          </div>
         </div>
       </div>
     </section>

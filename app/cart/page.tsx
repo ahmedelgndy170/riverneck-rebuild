@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Footer from "../../components/Footer";
 import { ShoppingCart, Trash2, Minus, Plus, CreditCard } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 
@@ -193,7 +192,6 @@ export default function CartPage() {
         )}
       </section>
 
-      <Footer />
     </main>
   );
 }

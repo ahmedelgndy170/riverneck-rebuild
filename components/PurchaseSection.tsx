@@ -12,6 +12,7 @@ import {
   Moon,
   Ticket,
 } from "lucide-react";
+import MembershipBenefits from "@/components/MembershipBenefits";
 
 type TabType = "day" | "membership" | "events";
 
@@ -404,6 +405,8 @@ export default function PurchasePage() {
                 Valid for 1 full year from purchase date.
               </p>
             </div>
+
+            <MembershipBenefits compact />
 
             <NumberField
               label="Number of People"

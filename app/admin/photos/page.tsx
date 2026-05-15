@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import { supabase } from "@/lib/supabaseClient";
+import { useNotify } from "@/context/NotificationContext";
 
 type PhotoType = {
   id: string;
@@ -24,6 +25,7 @@ type PhotoType = {
 };
 
 export default function AdminPhotosPage() {
+  const { toast, confirm } = useNotify();
   const [photos, setPhotos] = useState<PhotoType[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -49,7 +51,7 @@ export default function AdminPhotosPage() {
       });
 
     if (error) {
-      alert(error.message);
+      toast(error.message, "error");
       setLoading(false);
       return;
     }
@@ -91,7 +93,7 @@ export default function AdminPhotosPage() {
     setSavingEdit(false);
 
     if (error) {
-      alert(error.message);
+      toast(error.message, "error");
       return;
     }
 
@@ -101,7 +103,7 @@ export default function AdminPhotosPage() {
 
   async function uploadPhoto() {
     if (!selectedFile) {
-      alert("Please select an image.");
+      toast("Please select an image.", "error");
       return;
     }
 
@@ -120,7 +122,7 @@ export default function AdminPhotosPage() {
       .upload(filePath, selectedFile);
 
     if (uploadError) {
-      alert(uploadError.message);
+      toast(uploadError.message, "error");
       setUploading(false);
       return;
     }
@@ -144,7 +146,7 @@ export default function AdminPhotosPage() {
     setUploading(false);
 
     if (insertError) {
-      alert(insertError.message);
+      toast(insertError.message, "error");
       return;
     }
 
@@ -156,14 +158,19 @@ export default function AdminPhotosPage() {
   }
 
   async function deletePhoto(id: string) {
-    const confirmDelete = confirm("Delete this photo?");
+    const confirmDelete = await confirm({
+      title: "Delete photo",
+      message: "Delete this photo?",
+      confirmLabel: "Delete",
+      destructive: true,
+    });
 
     if (!confirmDelete) return;
 
     const { error } = await supabase.from("Photo").delete().eq("id", id);
 
     if (error) {
-      alert(error.message);
+      toast(error.message, "error");
       return;
     }
 

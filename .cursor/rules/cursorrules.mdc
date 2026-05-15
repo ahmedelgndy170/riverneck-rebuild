@@ -1,0 +1,11 @@
+---
+alwaysApply: true
+---
+
+Only analyze explicitly referenced files.
+
+Avoid repository-wide scans.
+
+Prefer minimal edits.
+
+Keep responses concise.

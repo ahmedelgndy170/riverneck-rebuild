@@ -11,6 +11,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
+import { useNotify } from "@/context/NotificationContext";
 
 function formatUSDate(value: string) {
   if (!value) return "Select Date";
@@ -41,6 +42,7 @@ export default function SignWaiverPage() {
 }
 
 function SignWaiverContent() {
+  const { toast } = useNotify();
   const searchParams = useSearchParams();
 
   const popup = searchParams.get("popup") === "true";
@@ -78,12 +80,12 @@ const [lookupLoading, setLookupLoading] = useState(false);
       !vehicleDescription ||
       !signature
     ) {
-      alert("Please complete all required fields.");
+      toast("Please complete all required fields.", "error");
       return;
     }
 
     if (!agreedRules || !agreedMedia || !agreedPipeline) {
-      alert("Please check all required agreement boxes.");
+      toast("Please check all required agreement boxes.", "error");
       return;
     }
 
@@ -109,7 +111,7 @@ const [lookupLoading, setLookupLoading] = useState(false);
     setSubmitting(false);
 
     if (error) {
-      alert(error.message);
+      toast(error.message, "error");
       return;
     }
 
@@ -132,7 +134,7 @@ const [lookupLoading, setLookupLoading] = useState(false);
   }
 async function lookupWaiver() {
   if (!lookupPhone) {
-    alert("Enter phone number.");
+    toast("Enter phone number.", "error");
     return;
   }
 
@@ -149,7 +151,7 @@ async function lookupWaiver() {
   setLookupLoading(false);
 
   if (error || !data) {
-    alert("No waiver found.");
+    toast("No waiver found.", "error");
     return;
   }
 
@@ -334,7 +336,11 @@ async function lookupWaiver() {
               </p>
             </div>
 
-            <form className="mt-6 space-y-5" onSubmit={submitWaiver}>
+            <form
+              className="mt-6 space-y-5"
+              onSubmit={submitWaiver}
+              noValidate
+            >
               <h3 className="text-[15px] font-black">Personal Information</h3>
 
               <div className="grid gap-5 md:grid-cols-2">

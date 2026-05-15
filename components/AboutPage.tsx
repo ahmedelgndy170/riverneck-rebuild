@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   Info,
   Clock,
@@ -17,9 +19,16 @@ import {
   MapPin,
   Phone,
   X,
+  AlertTriangle,
+  CalendarDays,
 } from "lucide-react";
-
-type Tab = "about" | "hours" | "pricing" | "rules" | "contact";
+import ContactForm from "@/components/ContactForm";
+import {
+  EVENT_WEEKENDS,
+  IMPORTANT_RULES_NOTE,
+  isAboutTab,
+  type AboutTab,
+} from "@/lib/parkContent";
 
 function getParkStatus() {
   const now = new Date();
@@ -55,9 +64,8 @@ function getParkStatus() {
 
   function nextOpenText() {
     if (isOpen) {
-      return `Open • Closes at ${
-        closeHour === 23 ? "11:00 PM" : "8:00 PM"
-      }`;
+      return `Open • Closes at ${closeHour === 23 ? "11:00 PM" : "8:00 PM"
+        }`;
     }
 
     for (let i = 0; i < 7; i++) {
@@ -149,17 +157,31 @@ const rules = [
 ];
 
 export default function AboutPage() {
-  const [tab, setTab] = useState<Tab>("about");
+  const searchParams = useSearchParams();
+  const [tab, setTab] = useState<AboutTab>("about");
   const [openRule, setOpenRule] = useState(0);
 
   const parkStatus = getParkStatus();
   const [waiverOpen, setWaiverOpen] = useState(false);
 
-  const tabClass = (name: Tab) =>
-    `flex cursor-pointer touch-manipulation items-center justify-center gap-2 rounded-[12px] px-4 py-3 text-[13px] font-black transition-all duration-300 active:scale-95 md:px-5 md:py-4 md:text-[15px] ${
-      tab === name
-        ? "bg-[#d5965c]/25 text-white shadow-[0_0_20px_rgba(213,150,92,0.25)] border border-[#d5965c]/40"
-        : "text-white/75 hover:bg-[#25b99a]/15 hover:text-white active:bg-[#25b99a]/15 active:text-white"
+  useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (isAboutTab(tabParam)) {
+      setTab(tabParam);
+    }
+  }, [searchParams]);
+
+  function selectTab(name: AboutTab) {
+    setTab(name);
+    const url = new URL(window.location.href);
+    url.searchParams.set("tab", name);
+    window.history.replaceState({}, "", `${url.pathname}?${url.searchParams.toString()}`);
+  }
+
+  const tabClass = (name: AboutTab) =>
+    `flex cursor-pointer touch-manipulation items-center justify-center gap-2 rounded-[12px] px-4 py-3 text-[13px] font-black transition-all duration-300 active:scale-95 md:px-5 md:py-4 md:text-[15px] ${tab === name
+      ? "bg-[#d5965c]/25 text-white shadow-[0_0_20px_rgba(213,150,92,0.25)] border border-[#d5965c]/40"
+      : "text-white/75 hover:bg-[#25b99a]/15 hover:text-white active:bg-[#25b99a]/15 active:text-white"
     }`;
 
   return (
@@ -183,7 +205,8 @@ export default function AboutPage() {
           {/* TABS */}
           <div className="mt-8 grid grid-cols-2 gap-2 rounded-2xl border border-white/10 bg-white/[0.03] p-2 md:mt-12 md:flex md:flex-wrap md:items-center md:justify-center md:gap-5 md:p-3">
             <button
-              onClick={() => setTab("about")}
+              type="button"
+              onClick={() => selectTab("about")}
               className={tabClass("about")}
             >
               <Info size={17} />
@@ -191,7 +214,8 @@ export default function AboutPage() {
             </button>
 
             <button
-              onClick={() => setTab("hours")}
+              type="button"
+              onClick={() => selectTab("hours")}
               className={tabClass("hours")}
             >
               <Clock size={17} />
@@ -199,7 +223,8 @@ export default function AboutPage() {
             </button>
 
             <button
-              onClick={() => setTab("pricing")}
+              type="button"
+              onClick={() => selectTab("pricing")}
               className={tabClass("pricing")}
             >
               <BadgeDollarSign size={17} />
@@ -207,7 +232,8 @@ export default function AboutPage() {
             </button>
 
             <button
-              onClick={() => setTab("rules")}
+              type="button"
+              onClick={() => selectTab("rules")}
               className={tabClass("rules")}
             >
               <Shield size={17} />
@@ -215,7 +241,8 @@ export default function AboutPage() {
             </button>
 
             <button
-              onClick={() => setTab("contact")}
+              type="button"
+              onClick={() => selectTab("contact")}
               className={`${tabClass("contact")} col-span-2 md:col-span-1`}
             >
               <Mail size={17} />
@@ -270,6 +297,19 @@ export default function AboutPage() {
                 text="We maintain our trails and expect respect."
               />
             </div>
+
+            <button
+              type="button"
+              onClick={() => selectTab("rules")}
+              className="w-full rounded-[16px] border border-[#d5965c]/40 bg-[#d5965c]/10 px-6 py-5 text-center transition hover:border-[#d5965c] hover:bg-[#d5965c]/20 active:scale-[0.99]"
+            >
+              <p className="text-[16px] font-black uppercase text-[#f2b35f] md:text-[20px]">
+                Rules and Regulations
+              </p>
+              <p className="mt-2 text-[14px] font-medium text-white/75">
+                View park rules, safety requirements, and waiver info
+              </p>
+            </button>
           </div>
         )}
 
@@ -310,6 +350,14 @@ export default function AboutPage() {
                   <span>Closed</span>
                 </div>
               </div>
+            </InfoBox>
+
+            <InfoBox icon={CalendarDays} title="Event Weekends">
+              <p className="mb-4 text-[14px] font-medium leading-relaxed text-white/75 md:text-[16px]">
+                Hours may be extended or adjusted for special events, night rides, and holiday weekends. Event-specific times will always be posted on our website and social media pages.
+
+                If you're unsure whether we're open on a specific day or want to confirm hours, we encourage riders to check our event calendar or contact us directly. We're happy to help you plan your visit.
+              </p>
             </InfoBox>
           </div>
         )}
@@ -362,23 +410,37 @@ export default function AboutPage() {
               Rules and Regulations
             </h2>
 
-            <div className="flex flex-col gap-3 md:flex-row md:flex-wrap md:justify-center md:gap-5">
-      <button
-  type="button"
-  onClick={() => setWaiverOpen(true)}
-  className="flex h-[54px] touch-manipulation items-center justify-center rounded-[12px] bg-[#25b99a] px-8 text-center text-[15px] font-black text-white transition-all duration-300 hover:bg-[#2fd9b5] active:scale-95 active:bg-[#2fd9b5]"
->
-  Sign Liability Waiver
-</button>
+            <div className="rounded-[16px] border border-[#f2c06b]/35 bg-[#f2c06b]/10 p-5 md:p-6">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="mt-0.5 shrink-0 text-[#f2c06b]" size={22} />
+                <div>
+                  <h3 className="text-[17px] font-black uppercase text-[#f2c06b] md:text-[20px]">
+                    {IMPORTANT_RULES_NOTE.title}
+                  </h3>
+                  <p className="mt-3 text-[14px] leading-[1.7] text-white/80 md:text-[16px]">
+                    {IMPORTANT_RULES_NOTE.body}
+                  </p>
+                </div>
+              </div>
+            </div>
 
-<a
-  href="https://www.scstatehouse.gov/code/t50c026.php"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="flex h-[54px] touch-manipulation items-center justify-center rounded-[12px] bg-[#7a4637] px-8 text-center text-[15px] font-black text-white transition-all duration-300 hover:bg-[#d5965c] hover:text-black active:scale-95 active:bg-[#d5965c] active:text-black"
->
-  Chandler’s Law
-</a>
+            <div className="flex flex-col gap-3 md:flex-row md:flex-wrap md:justify-center md:gap-5">
+              <button
+                type="button"
+                onClick={() => setWaiverOpen(true)}
+                className="flex h-[54px] touch-manipulation items-center justify-center rounded-[12px] bg-[#25b99a] px-8 text-center text-[15px] font-black text-white transition-all duration-300 hover:bg-[#2fd9b5] active:scale-95 active:bg-[#2fd9b5]"
+              >
+                Sign Liability Waiver
+              </button>
+
+              <a
+                href="https://www.scstatehouse.gov/code/t50c026.php"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-[54px] touch-manipulation items-center justify-center rounded-[12px] bg-[#7a4637] px-8 text-center text-[15px] font-black text-white transition-all duration-300 hover:bg-[#d5965c] hover:text-black active:scale-95 active:bg-[#d5965c] active:text-black"
+              >
+                Chandler’s Law
+              </a>
             </div>
 
             {rules.map((rule, index) => {
@@ -389,21 +451,19 @@ export default function AboutPage() {
               return (
                 <div
                   key={rule.title}
-                  className={`overflow-hidden rounded-[16px] border-2 transition duration-300 ${
-                    opened
+                  className={`overflow-hidden rounded-[16px] border-2 transition duration-300 ${opened
                       ? "border-[#d5965c] bg-[#d5965c]/10"
                       : "border-white/20 bg-black/25"
-                  }`}
+                    }`}
                 >
                   <button
                     onClick={() =>
                       setOpenRule(opened ? -1 : index)
                     }
-                    className={`flex w-full touch-manipulation items-center gap-4 px-5 py-5 text-left text-[16px] font-black uppercase transition-all duration-300 active:scale-[0.99] md:px-7 md:py-6 md:text-[27px] ${
-                      opened
+                    className={`flex w-full touch-manipulation items-center gap-4 px-5 py-5 text-left text-[16px] font-black uppercase transition-all duration-300 active:scale-[0.99] md:px-7 md:py-6 md:text-[27px] ${opened
                         ? "text-[#d5965c]"
                         : "text-white"
-                    }`}
+                      }`}
                   >
                     <Icon
                       size={22}
@@ -485,65 +545,32 @@ export default function AboutPage() {
                   Send Us A Message
                 </h3>
 
-                <form className="space-y-5">
-                  <Input
-                    label="Your Name"
-                    placeholder="John Doe"
-                  />
-
-                  <Input
-                    label="Your Email"
-                    placeholder="john@example.com"
-                  />
-
-                  <Input
-                    label="Phone Number"
-                    placeholder="(555) 123-4567"
-                  />
-
-                  <div>
-                    <label className="mb-2 block text-[14px] font-black md:text-[15px]">
-                      Your Message
-                    </label>
-
-                    <textarea
-                      placeholder="Tell us about your visit plans..."
-                      className="h-[120px] w-full rounded-[10px] border border-white/10 bg-black/35 p-4 text-[14px] outline-none transition-all duration-300 placeholder:text-white/35 hover:border-white/20 focus:bg-black/50 focus:ring-2 focus:ring-[#25b99a]/60 md:text-[15px]"
-                    />
-                  </div>
-
-                  <button
-                    type="button"
-                    className="h-[54px] w-full touch-manipulation rounded-[12px] bg-[#d5965c] text-[15px] font-black text-black transition-all duration-300 hover:bg-[#f2b35f] active:scale-95 active:bg-[#f2b35f]"
-                  >
-                    Send Message
-                  </button>
-                </form>
+                <ContactForm variant="amber" />
               </div>
             </div>
           </div>
         )}
       </div>
-     {waiverOpen && (
-  <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-3 backdrop-blur-md md:p-6">
-    <div className="relative h-[92vh] w-full overflow-hidden rounded-[18px] border border-white/15 bg-[#101010] shadow-[0_0_80px_rgba(0,0,0,0.85)] md:h-[88vh] md:max-w-[980px] md:rounded-[24px]">
-      <button
-        type="button"
-        onClick={() => setWaiverOpen(false)}
-        className="absolute right-3 top-3 z-30 flex h-10 w-10 touch-manipulation items-center justify-center rounded-full bg-black/80 text-white transition hover:bg-[#f2c06b] hover:text-black active:scale-90 md:right-4 md:top-4"
-        aria-label="Close waiver"
-      >
-        <X size={22} />
-      </button>
+      {waiverOpen && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-3 backdrop-blur-md md:p-6">
+          <div className="relative h-[92vh] w-full overflow-hidden rounded-[18px] border border-white/15 bg-[#101010] shadow-[0_0_80px_rgba(0,0,0,0.85)] md:h-[88vh] md:max-w-[980px] md:rounded-[24px]">
+            <button
+              type="button"
+              onClick={() => setWaiverOpen(false)}
+              className="absolute right-3 top-3 z-30 flex h-10 w-10 touch-manipulation items-center justify-center rounded-full bg-black/80 text-white transition hover:bg-[#f2c06b] hover:text-black active:scale-90 md:right-4 md:top-4"
+              aria-label="Close waiver"
+            >
+              <X size={22} />
+            </button>
 
-      <iframe
-        src="/sign-waiver?mode=new&popup=true"
-        className="h-full w-full border-0"
-        title="Sign Liability Waiver"
-      />
-    </div>
-  </div>
-)}
+            <iframe
+              src="/sign-waiver?mode=new&popup=true"
+              className="h-full w-full border-0"
+              title="Sign Liability Waiver"
+            />
+          </div>
+        </div>
+      )}
     </section>
   );
 }
@@ -554,11 +581,10 @@ function StatusPill({ parkStatus }: any) {
       <Clock size={16} />
 
       <span
-        className={`rounded-full px-3 py-1 text-[11px] font-black md:text-[12px] ${
-          parkStatus.isOpen
+        className={`rounded-full px-3 py-1 text-[11px] font-black md:text-[12px] ${parkStatus.isOpen
             ? "bg-[#25b99a]"
             : "bg-[#d94f68]"
-        }`}
+          }`}
       >
         {parkStatus.label}
       </span>
@@ -647,22 +673,6 @@ function ContactLine({
           {children}
         </p>
       </div>
-    </div>
-  );
-}
-
-function Input({ label, placeholder }: any) {
-  return (
-    <div>
-      <label className="mb-2 block text-[14px] font-black md:text-[15px]">
-        {label}
-      </label>
-
-      <input
-        placeholder={placeholder}
-        className="h-[50px] w-full rounded-[10px] border border-white/10 bg-black/35 px-4 text-[14px] outline-none transition-all duration-300 placeholder:text-white/35 hover:border-white/20 focus:bg-black/50 focus:ring-2 focus:ring-[#25b99a]/60 md:h-[52px] md:text-[15px]"
-      />
-      
     </div>
   );
 }

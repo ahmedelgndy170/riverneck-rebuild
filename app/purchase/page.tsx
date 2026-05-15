@@ -1,7 +1,6 @@
 "use client";
 
 import PurchaseSection from "@/components/PurchaseSection";
-import Footer from "@/components/Footer";
 
 export default function Page() {
   return (
@@ -10,9 +9,8 @@ export default function Page() {
 
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:48px_48px] opacity-20" />
 
-      <div className="relative z-10">
+      <div className="relative z-10 pt-[110px] md:pt-[140px]">
         <PurchaseSection />
-        <Footer />
       </div>
     </main>
   );

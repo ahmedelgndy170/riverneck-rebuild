@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 import { supabase } from "@/lib/supabaseClient";
+import { useNotify } from "@/context/NotificationContext";
 
 type EventType = {
   id: string;
@@ -28,6 +29,7 @@ const DEFAULT_IMAGE =
   "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1200&auto=format&fit=crop";
 
 export default function AdminEventsPage() {
+  const { toast, confirm } = useNotify();
   const [events, setEvents] = useState<EventType[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -51,7 +53,7 @@ export default function AdminEventsPage() {
       .order("startDate", { ascending: true });
 
     if (error) {
-      alert(error.message);
+      toast(error.message, "error");
       setLoading(false);
       return;
     }
@@ -77,7 +79,7 @@ export default function AdminEventsPage() {
 
   async function createEvent() {
     if (!title || !start) {
-      alert("Please fill required fields.");
+      toast("Please fill required fields.", "error");
       return;
     }
 
@@ -102,7 +104,7 @@ export default function AdminEventsPage() {
     setSaving(false);
 
     if (error) {
-      alert(error.message);
+      toast(error.message, "error");
       return;
     }
 
@@ -125,7 +127,7 @@ export default function AdminEventsPage() {
     if (!editingId) return;
 
     if (!title || !start) {
-      alert("Please fill required fields.");
+      toast("Please fill required fields.", "error");
       return;
     }
 
@@ -149,7 +151,7 @@ export default function AdminEventsPage() {
     setSaving(false);
 
     if (error) {
-      alert(error.message);
+      toast(error.message, "error");
       return;
     }
 
@@ -158,9 +160,12 @@ export default function AdminEventsPage() {
   }
 
   async function deleteEvent(id: string) {
-    const confirmDelete = confirm(
-      "Are you sure you want to delete this event?"
-    );
+    const confirmDelete = await confirm({
+      title: "Delete event",
+      message: "Are you sure you want to delete this event?",
+      confirmLabel: "Delete",
+      destructive: true,
+    });
 
     if (!confirmDelete) return;
 
@@ -170,7 +175,7 @@ export default function AdminEventsPage() {
       .eq("id", id);
 
     if (error) {
-      alert(error.message);
+      toast(error.message, "error");
       return;
     }
 

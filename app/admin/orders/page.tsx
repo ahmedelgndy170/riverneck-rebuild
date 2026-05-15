@@ -14,6 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
+import { useNotify } from "@/context/NotificationContext";
 
 type OrderItem = {
   id: string;
@@ -47,6 +48,7 @@ type Order = {
 type PurchaseTab = "day-passes" | "memberships" | "event-tickets";
 
 export default function AdminOrdersPage() {
+  const { toast, confirm } = useNotify();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -151,9 +153,12 @@ export default function AdminOrdersPage() {
   };
 
   const deleteOrder = async (orderId: string) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this purchase?"
-    );
+    const confirmed = await confirm({
+      title: "Delete purchase",
+      message: "Are you sure you want to delete this purchase?",
+      confirmLabel: "Delete",
+      destructive: true,
+    });
 
     if (!confirmed) return;
 
@@ -162,7 +167,7 @@ export default function AdminOrdersPage() {
     const { error } = await supabase.from("Order").delete().eq("id", orderId);
 
     if (error) {
-      alert("Purchase delete failed. Check Supabase RLS delete policies.");
+      toast("Purchase delete failed. Check Supabase RLS delete policies.", "error");
       console.error(error);
       return;
     }
@@ -178,7 +183,7 @@ export default function AdminOrdersPage() {
       .eq("id", orderId);
 
     if (error) {
-      alert("Could not update payment status.");
+      toast("Could not update payment status.", "error");
       console.error(error);
       return;
     }
