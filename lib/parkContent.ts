@@ -41,30 +41,12 @@ export const EVENT_WEEKENDS = [
   },
 ] as const;
 
-export const MEMBERSHIP_BENEFITS = [
-  {
-    title: "Unlimited Access",
-    text: "Ride any open day for an entire year",
-  },
-  {
-    title: "Dry Camping",
-    text: "Camp for free whenever you visit",
-  },
-  {
-    title: "All Trails",
-    text: "60+ miles of off-road terrain",
-  },
-  {
-    title: "Bring Friends",
-    text: "Base package includes 2 people & 1 machine",
-  },
-] as const;
-
 export const MEMBERSHIP_EXTRAS = [
-  "Additional people: +$50 each",
-  "Additional machines: +$100 each",
-  "Valid for 1 full year from purchase date",
-  "Does not include the four major annual events",
+  "Unlimited day riding for 1 full year",
+  "Dry camping included",
+  "Access to all trails Access to all trails",
+  "Valid for 2 people and 1 machine",
+  "Does not include entry to the four major annual events"
 ] as const;
 
 export type AboutTab =
