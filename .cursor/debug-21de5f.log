@@ -89,3 +89,4 @@
 {"sessionId":"21de5f","location":"PublicShell.tsx:pathname","message":"public chrome decision","data":{"pathname":"/about","showChrome":true,"rendersHeader":true,"rendersFooter":true},"timestamp":1778857634297,"hypothesisId":"C"}
 {"sessionId":"21de5f","location":"PublicShell.tsx:pathname","message":"public chrome decision","data":{"pathname":"/about","showChrome":true,"rendersHeader":true,"rendersFooter":true},"timestamp":1778857729215,"hypothesisId":"C"}
 {"sessionId":"21de5f","location":"PublicShell.tsx:pathname","message":"public chrome decision","data":{"pathname":"/about","showChrome":true,"rendersHeader":true,"rendersFooter":true},"timestamp":1778857778413,"hypothesisId":"C"}
+{"sessionId":"21de5f","location":"PublicShell.tsx:pathname","message":"public chrome decision","data":{"pathname":"/about","showChrome":true,"rendersHeader":true,"rendersFooter":true},"timestamp":1778858050702,"hypothesisId":"C"}
