@@ -189,6 +189,8 @@ export default function Home() {
         </a>
       </section>
 
+      <ScrollToTopButton />
+
       {/* SUMMER EVENT */}
       <section
         id="summer"
